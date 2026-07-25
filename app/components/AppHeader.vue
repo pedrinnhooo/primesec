@@ -3,8 +3,9 @@ const nuxtApp = useNuxtApp()
 const route = useRoute()
 const activeSection = ref<string>()
 const scrolled = ref(false)
-const menuOpen = ref(false)
-const mobileOpen = ref(false)
+/** Aberto via toque no hambúrguer (só no topo, em mobile). */
+const manualOpen = ref(false)
+const bar = ref<HTMLElement>()
 
 const items = computed(() => [
   {
@@ -26,44 +27,38 @@ const items = computed(() => [
   }
 ])
 
-const showBar = computed(() => !scrolled.value || menuOpen.value)
-const showFab = computed(() => scrolled.value && !menuOpen.value)
+/** Em mobile: menu aberto no scroll ou após toque no hambúrguer. */
+const expanded = computed(() => scrolled.value || manualOpen.value)
 
 function onScroll() {
-  const next = window.scrollY > 56
-  scrolled.value = next
-  if (!next) {
-    menuOpen.value = false
-    mobileOpen.value = false
-  }
+  scrolled.value = window.scrollY > 56
+  if (scrolled.value) manualOpen.value = false
 }
 
-function openMenu() {
-  menuOpen.value = true
-  // Mobile: abre já expandido, sem passo intermediário.
-  mobileOpen.value = true
+function toggleMenu() {
+  manualOpen.value = !manualOpen.value
 }
 
 function closeMenu() {
-  menuOpen.value = false
-  mobileOpen.value = false
+  manualOpen.value = false
 }
 
-function onNavClick() {
-  if (scrolled.value) {
-    closeMenu()
-    return
-  }
-  mobileOpen.value = false
+function onPointerDown(event: PointerEvent) {
+  if (!manualOpen.value || scrolled.value) return
+  const target = event.target as Node | null
+  if (target && bar.value?.contains(target)) return
+  manualOpen.value = false
 }
 
 onMounted(() => {
   onScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
+  document.addEventListener('pointerdown', onPointerDown)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
+  document.removeEventListener('pointerdown', onPointerDown)
 })
 
 nuxtApp.hooks.hookOnce('page:loading:end', () => {
@@ -82,164 +77,82 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
 
 <template>
   <header class="pointer-events-none fixed inset-x-0 top-0 z-50">
-    <Transition name="nav-fade">
+    <div class="pointer-events-auto mt-3 mx-3 w-[calc(100%-1.5rem)] sm:mt-4 sm:ml-10 sm:mr-6 sm:w-[calc(100%-4rem)] xl:ml-24 xl:mr-16 xl:w-[calc(100%-10rem)]">
       <div
-        v-if="showBar"
-        class="pointer-events-auto mt-4 ml-10 mr-6 w-[calc(100%-4rem)] sm:ml-14 sm:mr-10 sm:w-[calc(100%-6rem)] xl:ml-24 xl:mr-16 xl:w-[calc(100%-10rem)]"
+        ref="bar"
+        class="flex h-14 items-center justify-between gap-2 rounded-full px-2.5 transition-colors duration-300 sm:h-18 sm:gap-4 sm:px-3 xl:px-4 xl:pr-4"
+        :class="scrolled
+          ? 'border border-white/10 bg-default/75 shadow-lg shadow-black/20 backdrop-blur'
+          : 'border border-transparent bg-transparent'"
       >
-        <div
-          class="flex h-18 items-center justify-between gap-4 rounded-full px-3 transition-colors duration-300 sm:px-4 xl:pr-4"
-          :class="scrolled
-            ? 'border border-white/10 bg-default/75 shadow-lg shadow-black/20 backdrop-blur'
-            : 'border border-transparent bg-transparent'"
+        <NuxtLink
+          to="/"
+          class="mt-1 shrink-0 sm:mt-2"
+          aria-label="PrimeSec"
+          @click="closeMenu"
+        >
+          <AppLogo class="h-11 w-11 sm:h-14 sm:w-14" />
+        </NuxtLink>
+
+        <!-- Mobile no topo: hambúrguer. Ao rolar (ou após toque), vira o menu aberto. -->
+        <button
+          v-show="!expanded"
+          type="button"
+          class="primesec-burger inline-flex md:hidden"
+          :aria-expanded="expanded"
+          aria-controls="primesec-primary-nav"
+          aria-label="Abrir menu"
+          @click="toggleMenu"
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
+
+        <nav
+          id="primesec-primary-nav"
+          class="primesec-nav flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 lg:gap-2"
+          :class="{ 'max-md:hidden': !expanded }"
+          aria-label="Navegação principal"
         >
           <NuxtLink
-            to="/"
-            class="mt-1.5 shrink-0 sm:mt-2"
-            aria-label="PrimeSec"
-            @click="onNavClick"
+            v-for="item in items"
+            :key="item.to"
+            :to="item.to"
+            class="primesec-nav-link"
+            :class="{ 'primesec-nav-link--active': item.active }"
+            @click="closeMenu"
           >
-            <AppLogo class="h-12 w-12 sm:h-14 sm:w-14" />
+            <span
+              class="primesec-nav-link__signal"
+              aria-hidden="true"
+            />
+            <span>{{ item.label }}</span>
           </NuxtLink>
 
-          <nav
-            class="hidden items-center gap-2 lg:flex"
-            aria-label="Navegação principal"
-          >
-            <NuxtLink
-              v-for="item in items"
-              :key="item.to"
-              :to="item.to"
-              class="primesec-nav-link"
-              :class="{ 'primesec-nav-link--active': item.active }"
-            >
-              <span
-                class="primesec-nav-link__signal"
-                aria-hidden="true"
-              />
-              <span>{{ item.label }}</span>
-            </NuxtLink>
-
-            <NuxtLink
-              to="/contato"
-              class="primesec-contact"
-              @click="onNavClick"
-            >
-              <span
-                class="primesec-contact__shine"
-                aria-hidden="true"
-              />
-              <span class="relative z-10">Contato</span>
-              <svg
-                class="relative z-10 size-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
-            </NuxtLink>
-            <UButton
-              v-if="scrolled"
-              icon="i-lucide-x"
-              color="neutral"
-              variant="ghost"
-              square
-              aria-label="Fechar menu"
-              @click="closeMenu"
-            />
-          </nav>
-
-          <div class="flex items-center gap-1 lg:hidden">
-            <!-- Scroll: só o X volta ao FAB. Topo: hamburger abre o drawer. -->
-            <UButton
-              v-if="scrolled"
-              icon="i-lucide-x"
-              color="neutral"
-              variant="ghost"
-              square
-              aria-label="Fechar menu"
-              @click="closeMenu"
-            />
-            <UButton
-              v-else
-              size="sm"
-              variant="ghost"
-              color="neutral"
-              square
-              :aria-label="mobileOpen ? 'Fechar navegação' : 'Abrir navegação'"
-              :aria-expanded="mobileOpen"
-              @click="mobileOpen = !mobileOpen"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="size-5"
-                :class="{ 'primesec-burger--open': mobileOpen }"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <line
-                  class="primesec-burger__line primesec-burger__line--top"
-                  x1="4"
-                  y1="6"
-                  x2="20"
-                  y2="6"
-                />
-                <line
-                  class="primesec-burger__line primesec-burger__line--mid"
-                  x1="4"
-                  y1="12"
-                  x2="20"
-                  y2="12"
-                />
-                <line
-                  class="primesec-burger__line primesec-burger__line--bot"
-                  x1="4"
-                  y1="18"
-                  x2="20"
-                  y2="18"
-                />
-              </svg>
-            </UButton>
-          </div>
-        </div>
-
-        <div
-          v-if="mobileOpen"
-          class="mt-2 rounded-2xl border border-white/10 bg-default/90 p-4 backdrop-blur lg:hidden"
-        >
-          <UNavigationMenu
-            :items="items"
-            orientation="vertical"
-            @click="onNavClick"
-          />
-          <UButton
-            class="mt-4"
-            label="Contato"
-            block
+          <NuxtLink
             to="/contato"
-            @click="onNavClick"
-          />
-        </div>
+            class="primesec-contact"
+            @click="closeMenu"
+          >
+            <span
+              class="primesec-contact__shine"
+              aria-hidden="true"
+            />
+            <span class="relative z-10">Contato</span>
+            <svg
+              class="relative z-10 size-3 sm:size-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </NuxtLink>
+        </nav>
       </div>
-    </Transition>
+    </div>
   </header>
-
-  <Teleport to="body">
-    <button
-      v-if="showFab"
-      type="button"
-      class="primesec-fab primesec-fab--enter flex size-14 items-center justify-center rounded-full"
-      aria-label="Abrir menu PrimeSec"
-      @click="openMenu"
-    >
-      <AppLogo class="h-8 w-8" />
-    </button>
-  </Teleport>
 </template>

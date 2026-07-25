@@ -17,6 +17,15 @@ pnpm dev
 
 Conteúdo da home em `content/index.yml`.
 
+### Fronteiras do globo
+
+O globo lê `public/data/country-lines.bin`, gerado a partir do TopoJSON em
+`scripts/data/countries-110m.json`. Regenere depois de trocar a fonte:
+
+```bash
+pnpm data:countries
+```
+
 ## Produção
 
 ```bash

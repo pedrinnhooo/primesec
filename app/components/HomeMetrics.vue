@@ -23,44 +23,43 @@ defineProps<{
     }"
   >
     <template #headline>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion()"
         class="inline-block"
       >
         {{ headline }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <template #title>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion(0.1)"
+        :delay="0.1"
         class="inline-block"
       >
         {{ title }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <template #description>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion(0.2)"
+        :delay="0.2"
         class="inline-block"
       >
         {{ description }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <div class="overflow-hidden rounded-2xl border border-default">
       <!-- Divisórias via gap-px (altura total da linha). Ghost evita ring por card. -->
       <div class="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
-        <Motion
+        <ScrollReveal
           v-for="(metric, index) in items"
           :key="metric.label"
-          as="div"
           class="h-full"
-          v-bind="staggerMotion(index)"
+          variant="fade"
+          :delay="index * 0.08"
         >
           <UPageCard
             :title="metric.value"
@@ -76,7 +75,7 @@ defineProps<{
               description: 'font-mono text-xs uppercase tracking-[0.06em] text-dimmed mt-3'
             }"
           />
-        </Motion>
+        </ScrollReveal>
       </div>
     </div>
   </UPageSection>

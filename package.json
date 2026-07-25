@@ -8,7 +8,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "data:countries": "node scripts/build-country-lines.mjs"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.117",
@@ -17,12 +18,10 @@
     "@nuxt/ui": "^4.10.0",
     "@vueuse/nuxt": "^14.3.0",
     "better-sqlite3": "^13.0.1",
-    "motion-v": "^2.3.0",
     "nuxt": "^4.4.8",
     "nuxt-security": "2.6.0",
     "tailwindcss": "^4.3.2",
     "three": "^0.185.1",
-    "topojson-client": "^3.1.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -33,6 +32,7 @@
     "@types/topojson-specification": "^1.0.5",
     "eslint": "^10.7.0",
     "playwright-core": "^1.61.1",
+    "topojson-client": "^3.1.0",
     "typescript": "^6.0.3",
     "vue-tsc": "^3.3.7"
   },

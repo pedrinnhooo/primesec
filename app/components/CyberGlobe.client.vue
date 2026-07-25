@@ -6,6 +6,11 @@
  * de países em linhas finas, cidades luminosas, estrelas, atmosfera fresnel e
  * uma simulação contínua de ataques cibernéticos (arcos + partículas +
  * explosões) gerenciada pelo AttackManager em 3 draw calls.
+ *
+ * A montagem é dividida em etapas que reportam `progress`. O evento `ready` só
+ * dispara quando a cena está inteira na tela — fronteiras desenhadas, ataques
+ * em pleno voo e shaders já compilados — para que a tela de carregamento nunca
+ * revele o globo sendo montado aos poucos.
  */
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
@@ -29,16 +34,36 @@ const IDLE_RESUME_MS = 2500
 const INITIAL_LAT = 12
 const INITIAL_LNG = -28
 const INITIAL_CAMERA_DISTANCE = 3.35
+/**
+ * O relógio da simulação começa adiantado: os ataques pré-populados já contam
+ * como histórico, então o painel SOC nasce com números plausíveis em vez de
+ * uma taxa por minuto inflada pelo primeiro segundo.
+ */
+const WARM_SECONDS = 20
+/** Frames renderizados antes de revelar, para nada aparecer "em construção". */
+const WARM_FRAMES = 2
 
-const emit = defineEmits<{ ready: [] }>()
+const emit = defineEmits<{
+  ready: []
+  progress: [value: number]
+}>()
 
 const container = ref<HTMLDivElement>()
 const canvas = ref<HTMLCanvasElement>()
 const stats = useAttackSimulation()
-/** Só revela o canvas depois do primeiro frame, com fade em vez de "pop". */
-const ready = ref(false)
 
 let cleanup: (() => void) | undefined
+let disposed = false
+
+/**
+ * Devolve o controle ao navegador entre etapas: garante que a tela de
+ * carregamento continue animando enquanto a cena é construída.
+ */
+function yieldToPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => setTimeout(resolve, 0))
+  })
+}
 
 /** Textura radial usada na neblina espacial atrás do globo. */
 function createGlowTexture(): THREE.Texture {
@@ -57,31 +82,26 @@ function createGlowTexture(): THREE.Texture {
   return texture
 }
 
-onMounted(async () => {
+async function build() {
   // Em componentes .client.vue o template só é renderizado após o mount do
   // wrapper client-only do Nuxt: os refs ficam disponíveis no próximo tick.
   await nextTick()
-
-  // Libera o main thread (pintura do hero) antes de montar a cena WebGL.
-  await new Promise<void>((resolve) => {
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => resolve(), { timeout: 400 })
-    } else {
-      setTimeout(resolve, 0)
-    }
-  })
 
   const host = container.value
   const dom = canvas.value
   if (!host || !dom) return
 
   const isSmallScreen = window.matchMedia('(max-width: 640px)').matches
-  // Pool menor no boot: menos alocação síncrona no main thread.
   const maxAttacks = isSmallScreen ? 48 : 100
   const minActive = isSmallScreen ? 18 : 36
   const pixelRatio = Math.min(window.devicePixelRatio, isSmallScreen ? 1.25 : 1.75)
   const sphereSegs = isSmallScreen ? 32 : 48
   const starCount = isSmallScreen ? 480 : 900
+
+  // As fronteiras são o maior download da cena: começa antes de qualquer
+  // trabalho de GPU para viajar em paralelo com a montagem.
+  const countryGeometry = loadCountryLines(RADIUS * 1.004)
+  countryGeometry.catch(() => { /* globo continua funcional sem as fronteiras */ })
 
   // --- Renderer / cena / câmera ----------------------------------------
   const renderer = new THREE.WebGLRenderer({
@@ -97,6 +117,7 @@ onMounted(async () => {
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100)
   // Elevação leve para enquadrar o hemisfério norte sem cortar o globo.
   camera.position.set(0, 0.38, INITIAL_CAMERA_DISTANCE)
+  emit('progress', 0.15)
 
   // --- Luzes ------------------------------------------------------------
   scene.add(new THREE.AmbientLight(0x9db89d, 0.55))
@@ -135,22 +156,6 @@ onMounted(async () => {
     blending: THREE.AdditiveBlending
   })
   globe.add(new THREE.Mesh(atmosphereGeometry, atmosphereMaterial))
-
-  // --- Fronteiras dos países (carregamento assíncrono) -------------------
-  const countryMaterial = new THREE.LineBasicMaterial({
-    color: 0x9fcb82,
-    transparent: true,
-    opacity: isSmallScreen ? 0.9 : 0.78,
-    depthWrite: false
-  })
-  let countryLines: THREE.LineSegments | undefined
-  // Mantém as linhas um pouco acima da esfera e dos ataques para preservar
-  // o contorno dos países mesmo nas regiões mais escuras do globo.
-  loadCountryLines(RADIUS * 1.004).then((geometry) => {
-    countryLines = new THREE.LineSegments(geometry, countryMaterial)
-    countryLines.renderOrder = 2
-    globe.add(countryLines)
-  }).catch(() => { /* globo continua funcional sem as fronteiras */ })
 
   // --- Cidades ------------------------------------------------------------
   const cityGeometry = new THREE.BufferGeometry()
@@ -219,17 +224,45 @@ onMounted(async () => {
   nebula.position.set(0, 0, -2)
   nebula.scale.setScalar(11)
   scene.add(nebula)
+  emit('progress', 0.35)
+  await yieldToPaint()
+  if (disposed) return
+
+  // --- Fronteiras dos países -----------------------------------------------
+  // Mantidas um pouco acima da esfera e dos ataques para preservar o contorno
+  // dos países mesmo nas regiões mais escuras do globo.
+  const countryMaterial = new THREE.LineBasicMaterial({
+    color: 0x9fcb82,
+    transparent: true,
+    opacity: isSmallScreen ? 0.9 : 0.78,
+    depthWrite: false
+  })
+  let countryLines: THREE.LineSegments | undefined
+  const geometry = await countryGeometry.catch(() => undefined)
+  if (disposed) return
+  if (geometry) {
+    countryLines = new THREE.LineSegments(geometry, countryMaterial)
+    countryLines.renderOrder = 2
+    globe.add(countryLines)
+  }
+  emit('progress', 0.6)
+  await yieldToPaint()
+  if (disposed) return
 
   // --- Simulação de ataques -----------------------------------------------
   const attacks = new AttackManager(RADIUS * 1.002, maxAttacks, pixelRatio)
   globe.add(attacks.group)
   attacks.setResolution(host.clientWidth || 1, host.clientHeight || 1)
 
-  // Pré-população leve: o loop sobe até minActive sem travar o primeiro frame.
-  const warmCount = Math.min(8, minActive)
-  for (let i = 0; i < warmCount; i++) {
-    attacks.spawn(0, Math.random())
+  // Pool completo já em voo: no primeiro frame visível o globo aparece com a
+  // malha de ataques inteira, em vez de preenchê-la ao longo dos segundos.
+  for (let i = 0; i < minActive; i++) {
+    attacks.spawn(WARM_SECONDS, Math.random())
   }
+  stats.value = attacks.getStats(WARM_SECONDS)
+  emit('progress', 0.75)
+  await yieldToPaint()
+  if (disposed) return
 
   // --- Interação -----------------------------------------------------------
   const controls = new OrbitControls(camera, dom)
@@ -262,17 +295,46 @@ onMounted(async () => {
     }, IDLE_RESUME_MS)
   })
 
-  // --- Loop de animação -----------------------------------------------------
-  const clock = new THREE.Clock()
-  let elapsed = 0
-  let nextSpawnAt = 0
-  let nextStatsAt = 0
-  let rafId = 0
+  // --- Redimensionamento / visibilidade --------------------------------------
   let inView = true
+  const resize = () => {
+    const { clientWidth: w, clientHeight: h } = host
+    if (!w || !h) return
+    renderer.setSize(w, h, false)
+    attacks.setResolution(w, h)
+    camera.aspect = w / h
+    camera.updateProjectionMatrix()
+  }
+  resize()
+  const resizeObserver = new ResizeObserver(resize)
+  resizeObserver.observe(host)
+
+  // Pausa o render quando o globo sai da viewport.
+  const intersectionObserver = new IntersectionObserver(([entry]) => {
+    inView = entry?.isIntersecting ?? true
+  }, { threshold: 0 })
+  intersectionObserver.observe(host)
+
+  // Compila todos os programas antes do primeiro frame: sem isso o primeiro
+  // render engasga enquanto a GPU monta os shaders de arco, cidade e atmosfera.
+  await renderer.compileAsync(scene, camera).catch(() => { /* segue sem pré-compilar */ })
+  if (disposed) return
+  emit('progress', 0.92)
+
+  // --- Loop de animação -----------------------------------------------------
+  let lastFrameAt = performance.now()
+  let elapsed = WARM_SECONDS
+  let nextSpawnAt = WARM_SECONDS
+  let nextStatsAt = WARM_SECONDS
+  let rafId = 0
+  let frames = 0
 
   const frame = () => {
     rafId = requestAnimationFrame(frame)
-    const delta = Math.min(clock.getDelta(), 0.1)
+    const now = performance.now()
+    // Teto no delta: uma aba em segundo plano não deve avançar a simulação de golpe.
+    const delta = Math.min((now - lastFrameAt) / 1000, 0.1)
+    lastFrameAt = now
     if (!inView || document.hidden) return
     elapsed += delta
 
@@ -301,32 +363,13 @@ onMounted(async () => {
     }
 
     renderer.render(scene, camera)
-    if (!ready.value) {
-      ready.value = true
+
+    frames++
+    if (frames === WARM_FRAMES) {
+      emit('progress', 1)
       emit('ready')
     }
   }
-
-  // --- Redimensionamento / visibilidade --------------------------------------
-  const resize = () => {
-    const { clientWidth: w, clientHeight: h } = host
-    if (!w || !h) return
-    renderer.setSize(w, h, false)
-    attacks.setResolution(w, h)
-    camera.aspect = w / h
-    camera.updateProjectionMatrix()
-  }
-  resize()
-  const resizeObserver = new ResizeObserver(resize)
-  resizeObserver.observe(host)
-
-  // Pausa o render quando o globo sai da viewport.
-  const intersectionObserver = new IntersectionObserver(([entry]) => {
-    inView = entry?.isIntersecting ?? true
-  }, { threshold: 0 })
-  intersectionObserver.observe(host)
-
-  frame()
 
   cleanup = () => {
     cancelAnimationFrame(rafId)
@@ -349,9 +392,23 @@ onMounted(async () => {
     glowTexture.dispose()
     renderer.dispose()
   }
+
+  frame()
+}
+
+onMounted(() => {
+  build().catch(() => {
+    // Sem WebGL (ou com contexto recusado) o site não pode ficar preso na
+    // tela de carregamento: libera a revelação e deixa o placeholder CSS.
+    emit('progress', 1)
+    emit('ready')
+  })
 })
 
-onBeforeUnmount(() => cleanup?.())
+onBeforeUnmount(() => {
+  disposed = true
+  cleanup?.()
+})
 </script>
 
 <template>
@@ -361,8 +418,7 @@ onBeforeUnmount(() => cleanup?.())
   >
     <canvas
       ref="canvas"
-      class="block size-full cursor-grab active:cursor-grabbing transition-opacity duration-500 ease-out"
-      :class="ready ? 'opacity-100' : 'opacity-0'"
+      class="block size-full cursor-grab active:cursor-grabbing"
     />
   </div>
 </template>

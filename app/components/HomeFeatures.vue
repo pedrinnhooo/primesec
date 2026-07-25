@@ -23,41 +23,41 @@ defineProps<{
     }"
   >
     <template #headline>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion()"
         class="inline-block"
       >
         {{ headline }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <template #title>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion(0.1)"
+        :delay="0.1"
         class="inline-block"
       >
         {{ title }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <template #description>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion(0.2)"
+        :delay="0.2"
         class="inline-block"
       >
         {{ description }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <div class="rounded-2xl border border-default bg-default overflow-hidden">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px">
-        <Motion
+        <ScrollReveal
           v-for="(feature, index) in items"
           :key="feature.title"
-          v-bind="staggerMotion(index)"
+          variant="fade"
+          :delay="index * 0.08"
         >
           <UPageCard
             :icon="feature.icon"
@@ -71,7 +71,7 @@ defineProps<{
               description: 'text-sm leading-relaxed sm:line-clamp-2 lg:line-clamp-3 text-dimmed'
             }"
           />
-        </Motion>
+        </ScrollReveal>
       </div>
     </div>
   </UPageSection>

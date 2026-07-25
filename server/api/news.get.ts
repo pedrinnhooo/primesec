@@ -140,7 +140,14 @@ export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
 }, {
   name: 'live-news',
   getKey: () => 'balanced-v1',
-  // Feed "quase real time": cache de 2 min com revalidação em background (SWR).
+  // Cache de 2 min: o poll do client alinha com este TTL.
+  // Sem SWR — após expirar, a próxima request espera o feed fresco
+  // (horário + posts atualizam de verdade).
   maxAge: 120,
-  swr: true
+  swr: false,
+  // Refresh manual (?fresh=1) ignora o cache e regenera o feed.
+  shouldBypassCache: (event) => {
+    const query = getQuery(event)
+    return query.fresh === '1' || query.fresh === 'true'
+  }
 })

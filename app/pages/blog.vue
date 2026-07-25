@@ -26,10 +26,142 @@ const { data: feed, status, error, refresh } = await useFetch<NewsFeed>('/api/ne
   lazy: true
 })
 
-// Revalida a cada 2 min para manter o feed em (quase) tempo real.
-useIntervalFn(() => refresh(), 120_000)
+const toast = useToast()
 
-const loading = computed(() => status.value === 'pending' && !feed.value)
+// Horário local da última sincronização bem-sucedida (não o updatedAt
+// congelado no cache do Nitro — assim o label muda a cada refresh).
+const syncedAt = ref<Date | null>(null)
+const refreshing = ref(false)
+
+// Feedback do botão de sync: loading fica visível mesmo em resposta rápida;
+// success dá confirmação quando o horário quase não muda o suficiente pra notar.
+type RefreshFeedback = 'idle' | 'loading' | 'success'
+const refreshFeedback = ref<RefreshFeedback>('idle')
+let refreshSuccessTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(status, (value) => {
+  if (value === 'success' && feed.value && !syncedAt.value) {
+    syncedAt.value = new Date()
+  }
+})
+
+// Alinha com /api/news no nuxt-security: 8 tokens / 5 min.
+// Client guarda margem para o intervalo automático (~2–3 hits) e
+// corta spam de clique manual antes de estourar o 429 no servidor.
+const NEWS_RATE_WINDOW_MS = 300_000
+const NEWS_MANUAL_LIMIT = 5
+const NEWS_POLL_MS = 120_000
+const MANUAL_LOADING_MIN_MS = 400
+const MANUAL_SUCCESS_MS = 1400
+const manualRefreshAt = ref<number[]>([])
+
+function showRefreshLimitToast() {
+  toast.add({
+    title: 'Muitas atualizações',
+    description: 'Aguarde alguns minutos antes de atualizar o feed novamente.',
+    icon: 'i-lucide-alert-triangle',
+    color: 'warning'
+  })
+}
+
+function isRateLimitedError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false
+  const statusCode = 'statusCode' in err ? Number(err.statusCode) : NaN
+  const statusCodeAlt = 'status' in err ? Number(err.status) : NaN
+  return statusCode === 429 || statusCodeAlt === 429
+}
+
+function pruneManualRefreshes(now = Date.now()) {
+  manualRefreshAt.value = manualRefreshAt.value.filter(at => now - at < NEWS_RATE_WINDOW_MS)
+}
+
+function clearRefreshSuccessTimer() {
+  if (refreshSuccessTimer) {
+    clearTimeout(refreshSuccessTimer)
+    refreshSuccessTimer = null
+  }
+}
+
+function showRefreshSuccess() {
+  clearRefreshSuccessTimer()
+  refreshFeedback.value = 'success'
+  refreshSuccessTimer = setTimeout(() => {
+    refreshFeedback.value = 'idle'
+    refreshSuccessTimer = null
+  }, MANUAL_SUCCESS_MS)
+}
+
+onBeforeUnmount(() => {
+  clearRefreshSuccessTimer()
+})
+
+async function refreshFeed(manual = false) {
+  // Evita requisições concorrentes (botão + intervalo + retry).
+  if (status.value === 'pending' || refreshing.value) return
+
+  if (manual) {
+    const now = Date.now()
+    pruneManualRefreshes(now)
+    if (manualRefreshAt.value.length >= NEWS_MANUAL_LIMIT) {
+      showRefreshLimitToast()
+      return
+    }
+    manualRefreshAt.value.push(now)
+    clearRefreshSuccessTimer()
+    refreshFeedback.value = 'loading'
+  }
+
+  refreshing.value = true
+  const startedAt = Date.now()
+  try {
+    // Manual: ?fresh=1 bypassa o cache Nitro e regenera o feed.
+    // Auto (2 min): usa cache até expirar (maxAge 120s), aí vem fresco.
+    if (manual) {
+      const next = await $fetch<NewsFeed>('/api/news', {
+        query: { fresh: '1' }
+      })
+      feed.value = next
+      error.value = null
+    } else {
+      await refresh()
+    }
+    syncedAt.value = new Date()
+
+    if (manual) {
+      const elapsed = Date.now() - startedAt
+      if (elapsed < MANUAL_LOADING_MIN_MS) {
+        await new Promise(resolve => setTimeout(resolve, MANUAL_LOADING_MIN_MS - elapsed))
+      }
+      showRefreshSuccess()
+    }
+  } catch (err) {
+    if (manual) refreshFeedback.value = 'idle'
+    if (manual && isRateLimitedError(err)) {
+      showRefreshLimitToast()
+    }
+  } finally {
+    refreshing.value = false
+  }
+}
+
+// Poll a cada 2 min — alinhado ao maxAge do /api/news.
+useIntervalFn(() => {
+  refreshFeed(false)
+}, NEWS_POLL_MS)
+
+const loading = computed(() => (status.value === 'pending' || refreshing.value) && !feed.value)
+const isRefreshing = computed(() => status.value === 'pending' || refreshing.value)
+const isRefreshButtonLoading = computed(() =>
+  refreshFeedback.value === 'loading' || (isRefreshing.value && refreshFeedback.value !== 'success')
+)
+const refreshButtonIcon = computed(() =>
+  refreshFeedback.value === 'success' ? 'i-lucide-check' : 'i-lucide-refresh-cw'
+)
+const refreshButtonLabel = computed(() => {
+  if (refreshFeedback.value === 'loading' || isRefreshButtonLoading.value) return 'Atualizando notícias'
+  if (refreshFeedback.value === 'success') return 'Notícias atualizadas'
+  return 'Atualizar notícias'
+})
 
 type Filter = 'todas' | NewsCategory
 
@@ -48,10 +180,11 @@ const items = computed(() => {
 })
 
 const updatedLabel = computed(() => {
-  if (!feed.value) return ''
-  return new Date(feed.value.updatedAt).toLocaleTimeString('pt-BR', {
+  if (!syncedAt.value) return ''
+  return syncedAt.value.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    second: '2-digit'
   })
 })
 </script>
@@ -143,14 +276,15 @@ const updatedLabel = computed(() => {
             atualizado às {{ updatedLabel }}
           </span>
           <UButton
-            icon="i-lucide-refresh-cw"
-            color="neutral"
+            :icon="refreshButtonIcon"
+            :color="refreshFeedback === 'success' ? 'success' : 'neutral'"
             variant="subtle"
             size="sm"
             square
-            aria-label="Atualizar notícias"
-            :loading="status === 'pending'"
-            @click="refresh()"
+            :aria-label="refreshButtonLabel"
+            :loading="isRefreshButtonLoading"
+            :disabled="isRefreshButtonLoading"
+            @click="refreshFeed(true)"
           />
         </div>
       </div>
@@ -194,7 +328,8 @@ const updatedLabel = computed(() => {
             color="primary"
             variant="soft"
             icon="i-lucide-refresh-cw"
-            @click="refresh()"
+            :loading="isRefreshing"
+            @click="refreshFeed(true)"
           />
         </div>
 
@@ -212,13 +347,14 @@ const updatedLabel = computed(() => {
               :item="item"
               class="h-full"
             />
-            <Motion
+            <ScrollReveal
               v-else
-              v-bind="staggerMotion(Math.min(index - 3, 8))"
               class="h-full"
+              variant="fade"
+              :delay="Math.min(index - 3, 8) * 0.08"
             >
               <BlogNewsCard :item="item" />
-            </Motion>
+            </ScrollReveal>
           </template>
         </div>
       </div>

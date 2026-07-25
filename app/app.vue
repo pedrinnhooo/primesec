@@ -11,6 +11,12 @@ useHead({
   link: [
     { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
   ],
+  // Sem JS nada dispara o reveal nem esconde a tela de carregamento.
+  noscript: [
+    {
+      innerHTML: '<style>.primesec-reveal{opacity:1;transform:none}.primesec-hold .primesec-enter{animation-play-state:running}#globe-loader{display:none}</style>'
+    }
+  ],
   htmlAttrs: {
     lang: 'pt-BR'
   },

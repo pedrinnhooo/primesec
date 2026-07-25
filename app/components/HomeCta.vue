@@ -25,29 +25,28 @@ const { copy, copied } = useClipboard()
     </template>
 
     <template #title>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion()"
         class="inline-block"
       >
         {{ title }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <template #description>
-      <Motion
+      <ScrollReveal
         as="span"
-        v-bind="scrollMotion(0.1)"
+        :delay="0.1"
         class="inline-block"
       >
         {{ description }}
-      </Motion>
+      </ScrollReveal>
     </template>
 
     <template #links>
-      <Motion
+      <ScrollReveal
         class="flex flex-col items-center justify-center gap-6"
-        v-bind="scrollMotion(0.2)"
+        :delay="0.2"
       >
         <UButton
           v-for="link in links"
@@ -66,7 +65,7 @@ const { copy, copied } = useClipboard()
           :ui="{ trailingIcon: 'size-5' }"
           @click="copy(props.command)"
         />
-      </Motion>
+      </ScrollReveal>
     </template>
   </UPageCTA>
 </template>

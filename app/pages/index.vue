@@ -1,3 +1,12 @@
+<script lang="ts">
+/**
+ * Escopo de módulo (roda uma vez por carregamento de página, ao contrário do
+ * corpo de `<script setup>`): a tela de carregamento pertence à primeira
+ * pintura do site, não a cada volta para a home.
+ */
+let introDone = false
+</script>
+
 <script setup lang="ts">
 definePageMeta({
   colorMode: 'dark'
@@ -7,7 +16,10 @@ defineRouteRules({
   prerender: true
 })
 
-const { data: page } = await useAsyncData('index', () => queryCollection('content').first(), {
+// Via Nitro, não via queryCollection no cliente: ler o YAML no navegador
+// arrastaria o SQLite em WebAssembly do @nuxt/content (~1 MB) para o bundle.
+const { data: page } = await useFetch('/api/home', {
+  key: 'home-content',
   // Conteúdo da home é estático: hidrata direto do payload SSR/prerender.
   deep: false
 })
@@ -34,24 +46,70 @@ const heroTitle = computed(() => {
   }
 })
 
+/** Teto de segurança: sem WebGL ou em GPU lenta o site é revelado de todo jeito. */
+const REVEAL_TIMEOUT_MS = 9000
+
+const globeProgress = ref(0)
 // Placeholder CSS do globo fica visível até o WebGL renderizar o 1º frame.
 const globeReady = ref(false)
-/** Three.js só monta depois do hero pintar (~2s + idle). */
-const mountGlobe = ref(false)
+const fontsReady = ref(false)
+const revealed = ref(introDone)
+
+/** Trava a barra em 100% no instante em que a revelação é decidida. */
+const complete = ref(false)
+
+// As fontes valem uma fatia pequena: a montagem do globo domina o tempo de carga.
+const progress = computed(() => complete.value
+  ? 1
+  : globeProgress.value * 0.92 + (fontsReady.value ? 0.08 : 0))
+
+/** Tempo com a barra em 100% antes do crossfade começar. */
+const COMPLETE_PAINT_MS = 80
+
+let timeout: ReturnType<typeof setTimeout> | undefined
+let paintTimeout: ReturnType<typeof setTimeout> | undefined
+
+function reveal() {
+  if (revealed.value || complete.value) return
+  clearTimeout(timeout)
+  introDone = true
+  complete.value = true
+  // Sem esta folga o overlay sairia de cena marcando uma porcentagem
+  // intermediária: ele é desmontado no mesmo flush que zera a espera.
+  // setTimeout em vez de rAF para não travar em aba de fundo.
+  paintTimeout = setTimeout(() => {
+    revealed.value = true
+  }, COMPLETE_PAINT_MS)
+}
+
+watch([globeReady, fontsReady], ([globe, fonts]) => {
+  if (globe && fonts) reveal()
+})
 
 onMounted(() => {
-  const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
-  const idle = () => new Promise<void>((resolve) => {
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => resolve(), { timeout: 2500 })
-    } else {
-      setTimeout(resolve, 400)
-    }
-  })
+  if (revealed.value) return
 
-  Promise.all([wait(2000), idle()]).then(() => {
-    mountGlobe.value = true
-  })
+  timeout = setTimeout(reveal, REVEAL_TIMEOUT_MS)
+
+  // Espera o webfont para o hero não trocar de tipografia logo após a revelação.
+  const markFonts = () => {
+    fontsReady.value = true
+  }
+  const fonts = document.fonts?.ready ?? Promise.resolve()
+  fonts.then(markFonts).catch(markFonts)
+})
+
+onBeforeUnmount(() => {
+  clearTimeout(timeout)
+  clearTimeout(paintTimeout)
+})
+
+useHead({
+  link: [
+    // Maior download da cena: viaja em paralelo com o chunk do Three.js.
+    // `crossorigin` alinha o modo de credenciais do preload com o do fetch().
+    { rel: 'preload', as: 'fetch', crossorigin: 'anonymous', href: '/data/country-lines.bin' }
+  ]
 })
 </script>
 
@@ -59,7 +117,15 @@ onMounted(() => {
   <div
     v-if="page"
     class="relative"
+    :class="{ 'primesec-hold': !revealed }"
   >
+    <Transition name="globe-loader">
+      <GlobeLoader
+        v-if="!revealed"
+        :progress="progress"
+      />
+    </Transition>
+
     <!-- Full-bleed cyber threat globe behind hero + header area -->
     <div class="absolute inset-x-0 top-0 z-0 h-[min(100vh,56rem)] overflow-hidden">
       <!-- Globo estático (SSR): aparece junto com o site e some em crossfade -->
@@ -79,10 +145,11 @@ onMounted(() => {
           "
         />
       </div>
-      <!-- Three.js: só baixa/executa depois do load crítico. -->
+      <!-- Monta junto com a hidratação: a tela de carregamento cobre a cena
+           até ela estar inteira pronta. -->
       <LazyCyberGlobe
-        v-if="mountGlobe"
         class="absolute inset-x-0 top-0 -bottom-[10%]"
+        @progress="globeProgress = $event"
         @ready="globeReady = true"
       />
       <GradientGlow class="top-0 w-2/3 h-1/2" />

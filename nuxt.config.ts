@@ -5,7 +5,6 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/ui',
     '@vueuse/nuxt',
-    'motion-v/nuxt',
     'nuxt-security'
   ],
 
@@ -88,9 +87,23 @@ export default defineNuxtConfig({
   // Landing estática: HTML pronto no build, sem renderizar a cada request.
   routeRules: {
     '/': { prerender: true },
+    // Conteúdo estático da home: vira arquivo no build, sem consulta por request.
+    '/api/home': { prerender: true },
     '/data/**': {
       headers: {
         'cache-control': 'public, max-age=31536000, immutable'
+      }
+    },
+    // Feed agregado (HN + DEV): limite apertado — cache SWR de 2 min
+    // já cobre a maior parte; isto evita spam de refresh manual.
+    '/api/news': {
+      security: {
+        rateLimiter: {
+          tokensPerInterval: 8,
+          interval: 300_000,
+          headers: true,
+          throwError: true
+        }
       }
     },
     '/api/contact': {
@@ -138,28 +151,35 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-06-30',
 
   nitro: {
+    // Serve .br/.gz pré-comprimidos: o JS/CSS do build cai a ~1/4 na rede
+    // mesmo sem compressão na borda.
+    compressPublicAssets: {
+      gzip: true,
+      brotli: true
+    },
+
     prerender: {
       crawlLinks: true,
       routes: [
-        '/'
+        '/',
+        '/api/home'
       ]
     }
   },
 
   vite: {
-    // three/topojson só entram no grafo quando o LazyCyberGlobe monta (~2s+).
+    // three só entra no grafo quando o CyberGlobe monta.
     optimizeDeps: {
       exclude: [
-        'three',
-        'topojson-client'
+        'three'
       ]
     },
     build: {
       rollupOptions: {
         output: {
-          // Three.js + topojson ficam em chunk próprio (só baixado com o globo).
+          // Three.js fica em chunk próprio (só baixado junto com o globo).
           manualChunks(id) {
-            if (id.includes('node_modules/three') || id.includes('topojson-client')) {
+            if (id.includes('node_modules/three')) {
               return 'globe-three'
             }
           }
