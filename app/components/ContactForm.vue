@@ -233,7 +233,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 
     <div class="flex flex-col-reverse gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
       <p class="font-mono text-xs text-dimmed">
-        hmac · rate-limited · no spam
+        rate-limited · no spam
       </p>
       <UButton
         type="submit"
