@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NewsCategory, NewsFeed } from '#shared/types/news'
+import type { NewsCategory, NewsFeed, NewsTopic } from '#shared/types/news'
 
 definePageMeta({
   colorMode: 'dark'
@@ -10,7 +10,7 @@ defineRouteRules({
 })
 
 const title = 'Blog: Notícias de tecnologia e cibersegurança'
-const description = 'Radar em tempo real da PrimeSec: as últimas notícias de tecnologia e cibersegurança agregadas de fontes como Hacker News e DEV Community.'
+const description = 'Radar em tempo real da PrimeSec: notícias de tecnologia e cibersegurança em português, agregadas de fontes brasileiras como CISO Advisor, Canaltech, Tecnoblog e CERT.br.'
 
 useSeoMeta({
   title,
@@ -164,6 +164,7 @@ const refreshButtonLabel = computed(() => {
 })
 
 type Filter = 'todas' | NewsCategory
+type TopicFilter = 'todos' | NewsTopic
 
 const filters: Array<{ value: Filter, label: string, icon: string }> = [
   { value: 'todas', label: 'Todas', icon: 'i-lucide-newspaper' },
@@ -171,12 +172,42 @@ const filters: Array<{ value: Filter, label: string, icon: string }> = [
   { value: 'ciberseguranca', label: 'Cibersegurança', icon: 'i-lucide-shield' }
 ]
 
+const techTopics: Array<{ value: TopicFilter, label: string, icon: string }> = [
+  { value: 'todos', label: 'Todos', icon: 'i-lucide-layout-grid' },
+  { value: 'ia', label: 'IA', icon: 'i-lucide-sparkles' },
+  { value: 'uiux', label: 'UI/UX', icon: 'i-lucide-palette' },
+  { value: 'programacao', label: 'Programação', icon: 'i-lucide-code' }
+]
+
+const cyberTopics: Array<{ value: TopicFilter, label: string, icon: string }> = [
+  { value: 'todos', label: 'Todos', icon: 'i-lucide-layout-grid' },
+  { value: 'redteam', label: 'Red Team', icon: 'i-lucide-swords' },
+  { value: 'blueteam', label: 'Blue Team', icon: 'i-lucide-shield-check' },
+  { value: 'purpleteam', label: 'Purple Team', icon: 'i-lucide-blend' },
+  { value: 'lgpd-grc', label: 'LGPD & GRC', icon: 'i-lucide-scale' }
+]
+
 const activeFilter = ref<Filter>('todas')
+const activeTopic = ref<TopicFilter>('todos')
+
+const topicFilters = computed(() => {
+  if (activeFilter.value === 'tecnologia') return techTopics
+  if (activeFilter.value === 'ciberseguranca') return cyberTopics
+  return []
+})
+
+watch(activeFilter, () => {
+  activeTopic.value = 'todos'
+})
 
 const items = computed(() => {
   const all = feed.value?.items ?? []
-  if (activeFilter.value === 'todas') return all
-  return all.filter(item => item.category === activeFilter.value)
+  const byCategory = activeFilter.value === 'todas'
+    ? all
+    : all.filter(item => item.category === activeFilter.value)
+
+  if (activeTopic.value === 'todos') return byCategory
+  return byCategory.filter(item => item.topic === activeTopic.value)
 })
 
 const updatedLabel = computed(() => {
@@ -242,7 +273,7 @@ const updatedLabel = computed(() => {
           class="primesec-enter mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-dimmed"
           style="--enter-delay: 0.4s"
         >
-          O que está acontecendo agora no mundo da tecnologia e das ameaças digitais, agregado em tempo real de fontes que a comunidade confia.
+          O que está acontecendo agora no mundo da tecnologia e das ameaças digitais, agregado em tempo real de fontes brasileiras em português.
         </p>
       </div>
 
@@ -265,6 +296,26 @@ const updatedLabel = computed(() => {
               base: 'justify-center'
             }"
             @click="activeFilter = filter.value"
+          />
+        </div>
+
+        <div
+          v-if="topicFilters.length"
+          class="flex flex-wrap items-center justify-center gap-1.5"
+        >
+          <UButton
+            v-for="topic in topicFilters"
+            :key="topic.value"
+            :label="topic.label"
+            :icon="topic.icon"
+            :color="activeTopic === topic.value ? 'primary' : 'neutral'"
+            :variant="activeTopic === topic.value ? 'subtle' : 'ghost'"
+            size="xs"
+            class="rounded-full"
+            :ui="{
+              base: 'justify-center'
+            }"
+            @click="activeTopic = topic.value"
           />
         </div>
 
@@ -333,6 +384,20 @@ const updatedLabel = computed(() => {
           />
         </div>
 
+        <!-- Lista vazia (filtro) -->
+        <div
+          v-else-if="!items.length"
+          class="flex flex-col items-center gap-3 px-6 py-16 text-center"
+        >
+          <UIcon
+            name="i-lucide-filter-x"
+            class="size-8 text-dimmed"
+          />
+          <p class="max-w-sm text-sm leading-relaxed text-dimmed">
+            Nenhuma notícia neste filtro agora. Tente outro subtema ou atualize o feed.
+          </p>
+        </div>
+
         <!-- Lista -->
         <div
           v-else
@@ -359,8 +424,8 @@ const updatedLabel = computed(() => {
         </div>
       </div>
 
-      <p class="mt-4 text-center font-mono text-xs text-dimmed">
-        Fontes: Hacker News (Algolia API) e DEV Community. Os links abrem no site original.
+      <p class="mt-4 mx-auto max-w-3xl text-center font-mono text-xs leading-relaxed text-dimmed">
+        Fontes: CISO Advisor, Canaltech, Tecnoblog, Olhar Digital, CryptoID, Security Leaders, Total Security, CERT.br e Google Notícias (PT-BR). Os links abrem no site original.
       </p>
     </UPageSection>
 

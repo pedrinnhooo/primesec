@@ -94,7 +94,7 @@ export default defineNuxtConfig({
         'cache-control': 'public, max-age=31536000, immutable'
       }
     },
-    // Feed agregado (HN + DEV): limite apertado — cache SWR de 2 min
+    // Feed agregado (RSS PT-BR): limite apertado — cache de 2 min
     // já cobre a maior parte; isto evita spam de refresh manual.
     '/api/news': {
       security: {

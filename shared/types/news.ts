@@ -1,7 +1,14 @@
 export type NewsCategory = 'tecnologia' | 'ciberseguranca'
 
-/** Subtema opcional dentro de uma categoria (ex.: IA e UI/UX em tecnologia). */
-export type NewsTopic = 'ia' | 'uiux'
+/** Subtema opcional dentro de uma categoria. */
+export type NewsTopic =
+  | 'ia'
+  | 'uiux'
+  | 'programacao'
+  | 'redteam'
+  | 'blueteam'
+  | 'purpleteam'
+  | 'lgpd-grc'
 
 export interface NewsItem {
   id: string
