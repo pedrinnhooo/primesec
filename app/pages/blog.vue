@@ -121,7 +121,7 @@ async function refreshFeed(manual = false) {
         query: { fresh: '1' }
       })
       feed.value = next
-      error.value = null
+      error.value = undefined
     } else {
       await refresh()
     }
