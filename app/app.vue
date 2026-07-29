@@ -1,15 +1,22 @@
 <script setup lang="ts">
 const colorMode = useColorMode()
+const { localeProperties } = useI18n()
 
 const color = computed(() => colorMode.value === 'dark' ? '#09090b' : 'white')
 
-useHead({
+const i18nHead = useLocaleHead({
+  seo: true
+})
+
+useHead(() => ({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    { key: 'theme-color', name: 'theme-color', content: color }
+    { key: 'theme-color', name: 'theme-color', content: color.value },
+    ...(i18nHead.value.meta || [])
   ],
   link: [
-    { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
+    { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+    ...(i18nHead.value.link || [])
   ],
   // Sem JS nada dispara o reveal nem esconde a tela de carregamento.
   noscript: [
@@ -18,17 +25,17 @@ useHead({
     }
   ],
   htmlAttrs: {
-    lang: 'pt-BR'
+    lang: i18nHead.value.htmlAttrs?.lang || localeProperties.value.language || 'pt-BR',
+    dir: i18nHead.value.htmlAttrs?.dir || 'ltr'
   },
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} · PrimeSec` : 'PrimeSec'
   }
-})
+}))
 
 useSeoMeta({
   twitterCard: 'summary_large_image',
   ogType: 'website',
-  ogLocale: 'pt_BR',
   ogSiteName: 'PrimeSec'
 })
 </script>

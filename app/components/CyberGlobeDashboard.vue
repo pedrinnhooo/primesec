@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { ATTACK_META, ATTACK_TYPES } from '~/utils/globe/meta'
 
+const { t, locale } = useI18n()
 const stats = useAttackSimulation()
 
+const languageTag = computed(() => {
+  if (locale.value === 'en') return 'en-US'
+  if (locale.value === 'es') return 'es-ES'
+  return 'pt-BR'
+})
+
 const rows = computed(() => [
-  { label: 'Ataques ativos', value: String(stats.value.active) },
-  { label: 'Ataques / min', value: String(stats.value.perMinute) },
-  { label: 'Mais atacado', value: stats.value.topTargetCountry },
-  { label: 'Maior origem', value: stats.value.topSourceCountry },
-  { label: 'Ameaça dominante', value: ATTACK_META[stats.value.topType].label },
-  { label: 'Eventos simulados', value: stats.value.totalEvents.toLocaleString('pt-BR') }
+  { label: t('globe.activeAttacks'), value: String(stats.value.active) },
+  { label: t('globe.attacksPerMin'), value: String(stats.value.perMinute) },
+  { label: t('globe.topTarget'), value: stats.value.topTargetCountry },
+  { label: t('globe.topSource'), value: stats.value.topSourceCountry },
+  { label: t('globe.topThreat'), value: ATTACK_META[stats.value.topType].label },
+  { label: t('globe.simulatedEvents'), value: stats.value.totalEvents.toLocaleString(languageTag.value) }
 ])
 </script>
 
@@ -21,7 +28,7 @@ const rows = computed(() => [
         <span class="relative inline-flex size-2 rounded-full bg-primary" />
       </span>
       <span class="text-[10px] uppercase tracking-[0.18em] text-primary">
-        Global Threat Monitor
+        {{ t('globe.title') }}
       </span>
     </div>
 
@@ -55,7 +62,7 @@ const rows = computed(() => [
     </div>
 
     <p class="mt-3 text-[9px] leading-relaxed text-dimmed/70">
-      Simulação ilustrativa em tempo real
+      {{ t('globe.disclaimer') }}
     </p>
   </div>
 </template>

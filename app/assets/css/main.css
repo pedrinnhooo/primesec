@@ -33,6 +33,9 @@
 @theme static {
   --font-sans: 'Instrument Sans', -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
+  /* Fonte do wordmark (header/footer). Para testar outra: troque aqui
+     e registre a família em nuxt.config.ts > fonts.families. */
+  --font-brand: 'Germania One', 'Instrument Sans', -apple-system, sans-serif;
 
   --color-lime-50: #fbfde8;
   --color-lime-100: #f5fbb3;
@@ -118,6 +121,107 @@
   --ui-border: var(--ui-color-neutral-900);
 }
 
+.primesec-brand-link {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.primesec-brand-link:hover {
+  opacity: 0.88;
+}
+
+.primesec-brand-link:hover .primesec-brand__name {
+  color: color-mix(in oklch, var(--ui-primary) 72%, white);
+}
+
+.primesec-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  max-width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.primesec-brand__logo {
+  display: block;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+}
+
+.primesec-brand__name {
+  font-family: var(--font-brand);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  color: rgb(250 250 250);
+  text-shadow: 0 0 18px color-mix(in oklch, var(--ui-primary) 28%, transparent);
+}
+
+.primesec-brand--md .primesec-brand__logo {
+  width: 2rem;
+  height: 2rem;
+}
+
+.primesec-brand--md .primesec-brand__name {
+  font-size: 1.3rem;
+}
+
+.primesec-brand--sm .primesec-brand__logo {
+  width: 1.65rem;
+  height: 1.65rem;
+}
+
+.primesec-brand--sm .primesec-brand__name {
+  font-size: 1.12rem;
+  letter-spacing: 0.015em;
+}
+
+@media (min-width: 640px) {
+  .primesec-brand {
+    gap: 0.55rem;
+  }
+
+  .primesec-brand--md .primesec-brand__logo {
+    width: 2.65rem;
+    height: 2.65rem;
+  }
+
+  .primesec-brand--md .primesec-brand__name {
+    font-size: 1.55rem;
+    letter-spacing: 0.03em;
+  }
+
+  .primesec-brand--sm .primesec-brand__logo {
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .primesec-brand--sm .primesec-brand__name {
+    font-size: 1.22rem;
+  }
+}
+
+@media (max-width: 379px) {
+  /* Telas bem estreitas: wordmark compacto para não empurrar o menu. */
+  .primesec-brand--md .primesec-brand__name {
+    font-size: 1.1rem;
+    letter-spacing: 0.015em;
+  }
+
+  .primesec-brand--md .primesec-brand__logo {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
+
 /* Nav — attack traces + liquid-glass contact. */
 .primesec-nav {
   -ms-overflow-style: none;
@@ -159,6 +263,7 @@
 }
 
 .primesec-nav-link {
+  --nav-attack: var(--ui-primary);
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -178,6 +283,18 @@
     text-shadow 0.25s ease;
 }
 
+.primesec-nav-link--lime {
+  --nav-attack: var(--ui-primary);
+}
+
+.primesec-nav-link--orange {
+  --nav-attack: #fb923c;
+}
+
+.primesec-nav-link--purple {
+  --nav-attack: #c084fc;
+}
+
 @media (min-width: 640px) {
   .primesec-nav-link {
     min-height: 2.75rem;
@@ -190,7 +307,7 @@
 .primesec-nav-link--active {
   color: rgb(244 244 245);
   background: rgb(255 255 255 / 0.035);
-  text-shadow: 0 0 18px color-mix(in oklch, var(--ui-primary) 32%, transparent);
+  text-shadow: 0 0 18px color-mix(in oklch, var(--nav-attack) 32%, transparent);
 }
 
 .primesec-nav-link::before {
@@ -203,11 +320,11 @@
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in oklch, var(--ui-primary) 65%, transparent) 22%,
-    var(--ui-primary) 72%,
+    color-mix(in oklch, var(--nav-attack) 65%, transparent) 22%,
+    var(--nav-attack) 72%,
     transparent
   );
-  filter: drop-shadow(0 0 5px var(--ui-primary));
+  filter: drop-shadow(0 0 5px var(--nav-attack));
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
@@ -233,8 +350,8 @@
   width: 3px;
   height: 3px;
   border-radius: 999px;
-  background: var(--ui-primary);
-  box-shadow: 0 0 8px 2px color-mix(in oklch, var(--ui-primary) 55%, transparent);
+  background: var(--nav-attack);
+  box-shadow: 0 0 8px 2px color-mix(in oklch, var(--nav-attack) 55%, transparent);
   opacity: 0;
   transform: translateX(0);
 }
@@ -259,6 +376,74 @@
   70%,
   100% {
     transform: translateX(calc(100% + 4.5rem));
+  }
+}
+
+/* Loader: mesmo attack do nav — traço fino + signal luminoso varrendo. */
+.primesec-loader-bar {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  height: 1px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+}
+
+.primesec-loader-bar__fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--ui-primary) 65%, transparent) 22%,
+    var(--ui-primary) 72%,
+    var(--ui-primary)
+  );
+  filter: drop-shadow(0 0 5px var(--ui-primary));
+  transition: width 0.2s ease-out;
+}
+
+.primesec-loader-bar__signal {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ui-primary);
+  box-shadow: 0 0 8px 2px color-mix(in oklch, var(--ui-primary) 55%, transparent);
+  transform: translate(-50%, -50%);
+  animation: loader-attack-scan 1.25s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes loader-attack-scan {
+  0% {
+    left: 0;
+    opacity: 1;
+  }
+  70% {
+    left: 100%;
+    opacity: 1;
+  }
+  85%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primesec-loader-bar__signal {
+    animation: none;
+    left: 100%;
+    opacity: 1;
   }
 }
 
@@ -342,12 +527,209 @@
   transform: translateX(115%);
 }
 
-.primesec-contact:hover svg {
-  transform: translateX(3px);
+.primesec-contact:hover .primesec-contact__icon {
+  transform: translateY(-1px);
 }
 
-.primesec-contact svg {
+.primesec-contact__icon {
   transition: transform 0.25s ease;
+}
+
+.primesec-locale-wrap {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 0.55rem;
+  margin-right: 0.45rem;
+}
+
+@media (min-width: 640px) {
+  .primesec-locale-wrap {
+    margin-left: 0.65rem;
+    margin-right: 0.55rem;
+  }
+}
+
+.primesec-locale {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 9999px;
+  color: rgb(250 250 250);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.02) 48%, rgb(163 230 53 / 0.04)),
+    rgb(24 24 27 / 0.55);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 8px 24px rgb(0 0 0 / 0.2);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  .primesec-locale {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+}
+
+.primesec-locale__flag {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.62;
+  filter: saturate(1.12) contrast(1.05);
+  pointer-events: none;
+  user-select: none;
+}
+
+.primesec-locale__wash {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 45%, transparent 12%, rgb(9 9 11 / 0.18) 52%, rgb(9 9 11 / 0.55) 100%),
+    linear-gradient(160deg, rgb(9 9 11 / 0.08), rgb(9 9 11 / 0.32));
+  pointer-events: none;
+}
+
+.primesec-locale__code {
+  position: relative;
+  z-index: 2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.65);
+}
+
+@media (min-width: 640px) {
+  .primesec-locale__code {
+    font-size: 0.6rem;
+  }
+}
+
+.primesec-locale:hover {
+  border-color: color-mix(in oklch, var(--ui-primary) 55%, white 10%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.24),
+    0 10px 28px rgb(0 0 0 / 0.28),
+    0 0 22px color-mix(in oklch, var(--ui-primary) 16%, transparent);
+}
+
+.primesec-locale:hover .primesec-locale__flag {
+  opacity: 0.72;
+}
+
+.primesec-locale:active {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 6px 18px rgb(0 0 0 / 0.24);
+}
+
+.primesec-locale-menu {
+  z-index: 80;
+  min-width: 11.5rem;
+  padding: 0.35rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(165deg, rgb(255 255 255 / 0.08), transparent 42%),
+    rgb(18 18 20 / 0.92);
+  box-shadow:
+    0 18px 40px rgb(0 0 0 / 0.45),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(20px) saturate(1.35);
+  -webkit-backdrop-filter: blur(20px) saturate(1.35);
+}
+
+.primesec-locale-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.7rem;
+  color: rgb(250 250 250);
+  text-decoration: none;
+  transition: background-color 0.18s ease;
+}
+
+.primesec-locale-menu__item:hover {
+  background: rgb(255 255 255 / 0.06);
+}
+
+.primesec-locale-menu__item--active {
+  background: color-mix(in oklch, var(--ui-primary) 14%, transparent);
+}
+
+.primesec-locale-menu__item--active:hover {
+  background: color-mix(in oklch, var(--ui-primary) 18%, transparent);
+}
+
+.primesec-locale-menu__flag {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+}
+
+.primesec-locale-menu__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.primesec-locale-menu__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+}
+
+.primesec-locale-menu__name {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: rgb(161 161 170);
+}
+
+.primesec-locale-menu__item--active .primesec-locale-menu__name {
+  color: color-mix(in oklch, var(--ui-primary) 70%, white);
+}
+
+.primesec-locale-menu-enter-active,
+.primesec-locale-menu-leave-active {
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+
+.primesec-locale-menu-enter-from,
+.primesec-locale-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
 }
 
 /* Hero enter — CSS puro (sem motion-v no caminho crítico). */

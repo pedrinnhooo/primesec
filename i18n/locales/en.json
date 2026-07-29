@@ -1,0 +1,313 @@
+{
+  "nav": {
+    "services": "Services",
+    "howWeWork": "How we work",
+    "blog": "Blog",
+    "contact": "Contact",
+    "openMenu": "Open menu",
+    "primary": "Primary navigation"
+  },
+  "locale": {
+    "switch": "Switch language. Current: {current}",
+    "codes": {
+      "pt": "PT",
+      "en": "EN",
+      "es": "ES"
+    }
+  },
+  "footer": {
+    "rights": "© {year}"
+  },
+  "home": {
+    "seo": {
+      "title": "PrimeSec: Software Development and Information Security",
+      "description": "PrimeSec unites software development (frontend, mobile, backend and DevOps) with information security (pentest, Red Team, Blue Team, Purple Team, LGPD and GRC)."
+    },
+    "title": "Technology under control.\nEnd-to-end security.",
+    "description": "PrimeSec operates with two departments — software development and information security — to build, protect, test and keep your business compliant.",
+    "hero": {
+      "headline": "Dev and Sec: engineering and security in one partner",
+      "links": [
+        {
+          "label": "Talk to us",
+          "color": "primary",
+          "size": "xl",
+          "route": "contato"
+        },
+        {
+          "label": "See services",
+          "size": "xl",
+          "color": "neutral",
+          "variant": "soft",
+          "hash": "#features"
+        }
+      ]
+    },
+    "terminal": {
+      "lines": [
+        {
+          "segments": [
+            { "text": "$ ", "style": "prompt" },
+            { "text": "primesec", "style": "cmd" },
+            { "text": " assess", "style": "flag" }
+          ]
+        },
+        {
+          "segments": [
+            { "text": "→ Mapping stack, threats and compliance...", "style": "dim" }
+          ]
+        },
+        {
+          "segments": [
+            { "text": "→ Dept. ", "style": "dim" },
+            { "text": "Dev", "style": "cmd" },
+            { "text": " · Front · Mobile · Back · DevOps", "style": "dim" }
+          ]
+        },
+        {
+          "segments": [
+            { "text": "→ Dept. ", "style": "dim" },
+            { "text": "Sec", "style": "cmd" },
+            { "text": " · Pentest · Red/Blue/Purple · LGPD · GRC", "style": "dim" }
+          ]
+        },
+        {
+          "segments": [
+            { "text": "→ Technical scope and governance aligned ", "style": "dim" },
+            { "text": "✓", "style": "success" }
+          ]
+        },
+        {
+          "segments": [
+            { "text": " ", "style": "dim" }
+          ]
+        },
+        {
+          "segments": [
+            { "text": "✓ [200] ", "style": "success" },
+            { "text": "Welcome to the server ...", "style": "url" }
+          ]
+        }
+      ]
+    },
+    "logos": {
+      "title": "Stack and practices we master"
+    },
+    "features": {
+      "headline": "Services",
+      "title": "From code to compliance.",
+      "description": "A full catalog from both departments — software engineering and information security — using the names the market knows.",
+      "items": [
+        {
+          "icon": "i-lucide-panel-top",
+          "title": "Frontend Development",
+          "description": "Modern, responsive web interfaces with Vue, React and Nuxt. Focus on performance, accessibility, design systems and continuous delivery."
+        },
+        {
+          "icon": "i-lucide-smartphone",
+          "title": "Mobile Development",
+          "description": "Native and cross-platform apps for iOS and Android, with API integration, notifications, auth and a smooth production experience."
+        },
+        {
+          "icon": "i-lucide-server",
+          "title": "Backend and APIs",
+          "description": "REST and GraphQL APIs, microservices, authentication, queues and databases. Scalable, observable architecture ready to grow."
+        },
+        {
+          "icon": "i-lucide-cloud",
+          "title": "DevOps and Cloud",
+          "description": "CI/CD pipelines, containers, infrastructure as code and cloud environments such as AWS, with monitoring and secure deploys."
+        },
+        {
+          "icon": "i-lucide-blocks",
+          "title": "Software Architecture",
+          "description": "Solution design, legacy modernization and integration patterns, with technical decisions aligned to cost, timeline and security."
+        },
+        {
+          "icon": "i-lucide-pen-tool",
+          "title": "UX/UI and Digital Product",
+          "description": "Flows, prototypes and interfaces that turn business rules into usable product — from discovery to implementation with engineering."
+        },
+        {
+          "icon": "i-lucide-bug",
+          "title": "Pentest (Penetration Testing)",
+          "description": "Controlled vulnerability assessment for web, mobile, APIs and networks (VAPT), with a technical report and remediation guidance."
+        },
+        {
+          "icon": "i-lucide-swords",
+          "title": "Red Team",
+          "description": "Advanced offensive security with real-adversary simulation, testing people, process and technology far beyond a traditional pentest."
+        },
+        {
+          "icon": "i-lucide-shield",
+          "title": "Blue Team",
+          "description": "Defensive security with hardening, monitoring, detection, incident response and SOC support to reduce threat impact."
+        },
+        {
+          "icon": "i-lucide-blend",
+          "title": "Purple Team",
+          "description": "Collaborative attack-and-defense exercises to validate controls and improve detection, based on frameworks such as MITRE ATT&CK."
+        },
+        {
+          "icon": "i-lucide-file-lock-2",
+          "title": "LGPD / Privacy Compliance",
+          "description": "Privacy and data-protection programs: processing inventories, policies, legal bases, data-subject rights and operational alignment to the law."
+        },
+        {
+          "icon": "i-lucide-scale",
+          "title": "GRC (Governance, Risk and Compliance)",
+          "description": "Governance, risk management and compliance with policies, controls, gap analysis and support for standards such as ISO 27001 and NIST."
+        }
+      ]
+    },
+    "metrics": {
+      "headline": "How we work",
+      "title": "Two departments. One delivery.",
+      "description": "Engineering and security specialists in the same flow: from secure build to pentest, from defended operations to documented compliance.",
+      "items": [
+        { "value": "2", "label": "Departments", "class": "text-success" },
+        { "value": "12", "label": "Service lines", "class": "text-primary" },
+        { "value": "Sec", "label": "Offense, defense and GRC", "class": "text-info" },
+        { "value": "E2E", "label": "From product to compliance", "class": "text-warning" }
+      ]
+    },
+    "cta": {
+      "title": "Shall we structure\nthe next step?",
+      "description": "Tell us your challenge — product, app, API, pentest, Red or Blue Team, privacy or GRC. We'll define the right front and scope with you.",
+      "command": "priimesec{'@'}gmail.com",
+      "links": [
+        {
+          "label": "Talk to us",
+          "color": "primary",
+          "route": "contato"
+        }
+      ]
+    }
+  },
+  "contact": {
+    "seo": {
+      "title": "Contact: talk to PrimeSec",
+      "description": "Share your software development or information security challenge. PrimeSec replies within 1 business day."
+    },
+    "badge": "Open channel",
+    "titlePrimary": "Tell us the challenge.",
+    "titleSecondary": "We define the front.",
+    "description": "Development, pentest, Red/Blue/Purple Team, privacy or GRC — one message is enough to start scoping.",
+    "session": "primesec · contact session",
+    "channels": {
+      "canal": "channel",
+      "sla": "sla",
+      "slaValue": "≤ 1 business day",
+      "frentes": "fronts",
+      "frentesValue": "Dev · Sec · GRC"
+    },
+    "formEyebrow": "new request",
+    "formHint": "Essential fields. No bureaucracy.",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "What should we call you?",
+      "email": "Email",
+      "emailPlaceholder": "you{'@'}company.com",
+      "company": "Company",
+      "companyHint": "Optional",
+      "companyPlaceholder": "Where you work",
+      "subject": "Subject",
+      "subjectPlaceholder": "Which front fits?",
+      "message": "Message",
+      "messagePlaceholder": "Describe the context, timeline and what you need to solve.",
+      "submit": "Send message"
+    },
+    "subjects": {
+      "software": "Software development",
+      "pentest": "Pentest (Penetration Testing)",
+      "red-blue-purple": "Red Team / Blue Team / Purple Team",
+      "lgpd": "LGPD / privacy compliance",
+      "grc": "GRC and compliance",
+      "other": "Other"
+    },
+    "errors": {
+      "name": "Please enter your name.",
+      "email": "Please enter a valid email.",
+      "subject": "Please select a subject.",
+      "message": "Tell us a bit more about the challenge (at least 10 characters)."
+    },
+    "toast": {
+      "failTitle": "Could not send",
+      "failChallenge": "Reload the page and try again, or write to priimesec{'@'}gmail.com.",
+      "failRetry": "Try again or write directly to priimesec{'@'}gmail.com.",
+      "successTitle": "Message sent!",
+      "successDescription": "We received your contact and will reply within 1 business day."
+    }
+  },
+  "blog": {
+    "seo": {
+      "title": "Blog: Technology and cybersecurity news",
+      "description": "PrimeSec's live radar: technology and cybersecurity news in Portuguese, aggregated from Brazilian sources such as CISO Advisor, Canaltech, Tecnoblog and CERT.br."
+    },
+    "badge": "Live feed · updates every 2 min",
+    "titlePrimary": "Technology radar",
+    "titleSecondary": "and cybersecurity",
+    "description": "What's happening now in technology and digital threats, aggregated in real time from Brazilian sources in Portuguese.",
+    "updatedAt": "updated at {time}",
+    "refresh": "Refresh news",
+    "refreshing": "Refreshing news",
+    "refreshed": "News updated",
+    "rateLimitTitle": "Too many refreshes",
+    "rateLimitDescription": "Wait a few minutes before refreshing the feed again.",
+    "error": "Could not load the feed right now. Check your connection and try again.",
+    "retry": "Try again",
+    "empty": "No news in this filter right now. Try another topic or refresh the feed.",
+    "sources": "Sources: CISO Advisor, Canaltech, Tecnoblog, Olhar Digital, CryptoID, Security Leaders, Total Security, CERT.br and Google News (PT-BR). Links open on the original site.",
+    "filters": {
+      "all": "All",
+      "tech": "Technology",
+      "cyber": "Cybersecurity",
+      "topicsAll": "All"
+    },
+    "cta": {
+      "title": "Need help with what you read here?",
+      "description": "From fixing a vulnerability to the next product: our development and security teams can help.",
+      "link": "Talk to us"
+    }
+  },
+  "categories": {
+    "tecnologia": "Technology",
+    "ciberseguranca": "Cybersecurity"
+  },
+  "topics": {
+    "ia": "AI",
+    "uiux": "UI/UX",
+    "programacao": "Programming",
+    "redteam": "Red Team",
+    "blueteam": "Blue Team",
+    "purpleteam": "Purple Team",
+    "lgpd-grc": "LGPD & GRC"
+  },
+  "loader": {
+    "messages": [
+      "Analyzing threats...",
+      "Loading global map...",
+      "Syncing events...",
+      "Processing intelligence...",
+      "Identifying attacks...",
+      "Preparing visualization...",
+      "Finishing load..."
+    ]
+  },
+  "globe": {
+    "title": "Global Threat Monitor",
+    "activeAttacks": "Active attacks",
+    "attacksPerMin": "Attacks / min",
+    "topTarget": "Most targeted",
+    "topSource": "Top source",
+    "topThreat": "Dominant threat",
+    "simulatedEvents": "Simulated events",
+    "disclaimer": "Illustrative real-time simulation"
+  },
+  "timeAgo": {
+    "now": "now",
+    "minutes": "{n} min ago",
+    "hours": "{n} h ago",
+    "days": "{n} d ago"
+  }
+}

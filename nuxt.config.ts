@@ -5,6 +5,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxt/ui',
     '@vueuse/nuxt',
+    '@nuxtjs/i18n',
     'nuxt-security'
   ],
 
@@ -13,6 +14,31 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
+
+  fonts: {
+    families: [
+      { name: 'Germania One', provider: 'google', global: true, weights: [400] }
+    ]
+  },
+
+  i18n: {
+    locales: [
+      { code: 'pt', language: 'pt-BR', name: 'Português', file: 'pt.json' },
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'es', language: 'es-ES', name: 'Español', file: 'es.json' }
+    ],
+    defaultLocale: 'pt',
+    strategy: 'prefix_except_default',
+    lazy: true,
+    langDir: 'locales',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      fallbackLocale: 'pt'
+    },
+    baseUrl: 'https://primesec.com.br'
+  },
 
   runtimeConfig: {
     // Override em produção: NUXT_CONTACT_HMAC_SECRET
@@ -162,6 +188,8 @@ export default defineNuxtConfig({
       crawlLinks: true,
       routes: [
         '/',
+        '/en',
+        '/es',
         '/api/home'
       ]
     }

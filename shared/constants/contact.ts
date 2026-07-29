@@ -1,10 +1,13 @@
+/** Chaves estáveis do assunto — labels vêm do i18n. */
 export const CONTACT_SUBJECTS = [
-  'Desenvolvimento de software',
-  'Pentest (Teste de Invasão)',
-  'Red Team / Blue Team / Purple Team',
-  'Adequação à LGPD',
-  'GRC e conformidade',
-  'Outro assunto'
+  'software',
+  'pentest',
+  'red-blue-purple',
+  'lgpd',
+  'grc',
+  'other'
 ] as const
 
 export type ContactSubject = (typeof CONTACT_SUBJECTS)[number]
+
+export const CONTACT_EMAIL = 'priimesec@gmail.com'

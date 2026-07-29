@@ -1,14 +1,26 @@
 <script setup lang="ts">
+import { CONTACT_EMAIL } from '#shared/constants/contact'
+
 definePageMeta({
   colorMode: 'dark'
+})
+
+defineI18nRoute({
+  paths: {
+    pt: '/contato',
+    en: '/contact',
+    es: '/contacto'
+  }
 })
 
 defineRouteRules({
   prerender: true
 })
 
-const title = 'Contato: fale com a PrimeSec'
-const description = 'Conte o seu desafio de desenvolvimento de software ou segurança da informação. A PrimeSec responde em até 1 dia útil.'
+const { t } = useI18n()
+
+const title = computed(() => t('contact.seo.title'))
+const description = computed(() => t('contact.seo.description'))
 
 useSeoMeta({
   title,
@@ -17,14 +29,14 @@ useSeoMeta({
   ogDescription: description
 })
 
-const email = 'priimesec@gmail.com'
+const email = CONTACT_EMAIL
 const { copy, copied } = useClipboard()
 
-const channels = [
-  { label: 'canal', value: email, action: 'copy' as const },
-  { label: 'sla', value: '≤ 1 dia útil' },
-  { label: 'frentes', value: 'Dev · SI · GRC' }
-]
+const channels = computed(() => [
+  { label: t('contact.channels.canal'), value: email, action: 'copy' as const },
+  { label: t('contact.channels.sla'), value: t('contact.channels.slaValue') },
+  { label: t('contact.channels.frentes'), value: t('contact.channels.frentesValue') }
+])
 </script>
 
 <template>
@@ -37,7 +49,7 @@ const channels = [
 
     <UPageSection
       :ui="{
-        root: 'relative z-10 pt-8 pb-20 sm:pt-10 sm:pb-28',
+        root: 'relative z-10 pt-20 pb-20 sm:pt-10 sm:pb-28',
         container: 'max-w-4xl'
       }"
     >
@@ -50,7 +62,7 @@ const channels = [
           <UBadge
             color="neutral"
             variant="soft"
-            label="Canal aberto"
+            :label="t('contact.badge')"
             class="rounded-full px-3 py-1.5 gap-1.5 bg-white/5 backdrop-blur"
           >
             <template #leading>
@@ -67,7 +79,7 @@ const channels = [
           class="primesec-enter mt-7 w-full max-w-3xl text-center sm:w-auto sm:text-left text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] text-highlighted"
           style="--enter-delay: 0.22s"
         >
-          Conte o desafio.
+          {{ t('contact.titlePrimary') }}
           <br>
           <span
             class="animate-shimmer bg-size-[200%_auto] bg-clip-text text-transparent"
@@ -76,7 +88,7 @@ const channels = [
               animationDuration: '10s'
             }"
           >
-            A gente define a frente.
+            {{ t('contact.titleSecondary') }}
           </span>
         </h1>
 
@@ -84,7 +96,7 @@ const channels = [
           class="primesec-enter mt-6 w-full max-w-xl text-center sm:w-auto sm:text-left text-base sm:text-lg leading-relaxed text-dimmed"
           style="--enter-delay: 0.36s"
         >
-          Desenvolvimento, pentest, Red/Blue/Purple Team, LGPD ou GRC — uma mensagem basta para começar o escopo.
+          {{ t('contact.description') }}
         </p>
 
         <!-- Status strip: terminal, não checklist genérico -->
@@ -95,7 +107,7 @@ const channels = [
           <div class="flex items-center gap-2 border-b border-white/5 px-4 py-2.5">
             <span class="size-2 rounded-full bg-primary/80 shadow-[0_0_8px_var(--ui-primary)]" />
             <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-dimmed">
-              primesec · contact session
+              {{ t('contact.session') }}
             </span>
           </div>
           <div class="grid gap-px sm:grid-cols-3">
@@ -143,10 +155,10 @@ const channels = [
           <div class="mb-8 flex items-end justify-between gap-4 border-b border-white/5 pb-6">
             <div>
               <p class="font-mono text-xs uppercase tracking-[0.14em] text-primary">
-                nova solicitação
+                {{ t('contact.formEyebrow') }}
               </p>
               <p class="mt-2 text-sm text-dimmed">
-                Campos essenciais. Sem burocracia.
+                {{ t('contact.formHint') }}
               </p>
             </div>
             <span class="hidden font-mono text-xs text-dimmed sm:inline">

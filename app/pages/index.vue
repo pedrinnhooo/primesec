@@ -16,19 +16,10 @@ defineRouteRules({
   prerender: true
 })
 
-// Via Nitro, não via queryCollection no cliente: ler o YAML no navegador
-// arrastaria o SQLite em WebAssembly do @nuxt/content (~1 MB) para o bundle.
-const { data: page } = await useFetch('/api/home', {
-  key: 'home-content',
-  // Conteúdo da home é estático: hidrata direto do payload SSR/prerender.
-  deep: false
-})
-if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
-}
+const page = useHomeContent()
 
-const title = page.value?.seo?.title || page.value?.title
-const description = page.value?.seo?.description || page.value?.description
+const title = computed(() => page.value.seo.title || page.value.title.replace(/\n/g, ' '))
+const description = computed(() => page.value.seo.description || page.value.description)
 
 useSeoMeta({
   title,
@@ -38,7 +29,7 @@ useSeoMeta({
 })
 
 const heroTitle = computed(() => {
-  const [primary = '', ...secondaryParts] = (page.value?.title ?? '').split('\n')
+  const [primary = '', ...secondaryParts] = (page.value.title ?? '').split('\n')
 
   return {
     primary,
@@ -64,7 +55,13 @@ const progress = computed(() => complete.value
   : globeProgress.value * 0.92 + (fontsReady.value ? 0.08 : 0))
 
 /** Tempo com a barra em 100% antes do crossfade começar. */
-const COMPLETE_PAINT_MS = 80
+const COMPLETE_PAINT_MS = 180
+
+/**
+ * Teto se o evento `done` do loader falhar: ~100 ticks de 30ms + folga.
+ * O overlay NÃO deve sumir antes da contagem 0→100 terminar.
+ */
+const COUNTUP_SAFETY_MS = 8000
 
 let timeout: ReturnType<typeof setTimeout> | undefined
 let paintTimeout: ReturnType<typeof setTimeout> | undefined
@@ -73,10 +70,17 @@ function reveal() {
   if (revealed.value || complete.value) return
   clearTimeout(timeout)
   introDone = true
+  // Marca progresso real como completo; a % na tela continua contando
+  // até 100 e só então emite `done`.
   complete.value = true
-  // Sem esta folga o overlay sairia de cena marcando uma porcentagem
-  // intermediária: ele é desmontado no mesmo flush que zera a espera.
-  // setTimeout em vez de rAF para não travar em aba de fundo.
+  paintTimeout = setTimeout(() => {
+    revealed.value = true
+  }, COUNTUP_SAFETY_MS)
+}
+
+function onLoaderDone() {
+  if (revealed.value) return
+  clearTimeout(paintTimeout)
   paintTimeout = setTimeout(() => {
     revealed.value = true
   }, COMPLETE_PAINT_MS)
@@ -115,7 +119,6 @@ useHead({
 
 <template>
   <div
-    v-if="page"
     class="relative"
     :class="{ 'primesec-hold': !revealed }"
   >
@@ -123,6 +126,7 @@ useHead({
       <GlobeLoader
         v-if="!revealed"
         :progress="progress"
+        @done="onLoaderDone"
       />
     </Transition>
 

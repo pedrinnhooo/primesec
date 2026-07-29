@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NewsCategory, NewsFeed, NewsTopic } from '#shared/types/news'
+import { CONTACT_EMAIL } from '#shared/constants/contact'
 
 definePageMeta({
   colorMode: 'dark'
@@ -9,8 +10,11 @@ defineRouteRules({
   prerender: true
 })
 
-const title = 'Blog: Notícias de tecnologia e cibersegurança'
-const description = 'Radar em tempo real da PrimeSec: notícias de tecnologia e cibersegurança em português, agregadas de fontes brasileiras como CISO Advisor, Canaltech, Tecnoblog e CERT.br.'
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+
+const title = computed(() => t('blog.seo.title'))
+const description = computed(() => t('blog.seo.description'))
 
 useSeoMeta({
   title,
@@ -18,6 +22,8 @@ useSeoMeta({
   description,
   ogDescription: description
 })
+
+const ctaCommand = CONTACT_EMAIL
 
 // Fetch só no client: a página é prerenderizada como casca estática
 // e o feed hidrata "ao vivo" no navegador.
@@ -57,8 +63,8 @@ const manualRefreshAt = ref<number[]>([])
 
 function showRefreshLimitToast() {
   toast.add({
-    title: 'Muitas atualizações',
-    description: 'Aguarde alguns minutos antes de atualizar o feed novamente.',
+    title: t('blog.rateLimitTitle'),
+    description: t('blog.rateLimitDescription'),
     icon: 'i-lucide-alert-triangle',
     color: 'warning'
   })
@@ -158,41 +164,42 @@ const refreshButtonIcon = computed(() =>
   refreshFeedback.value === 'success' ? 'i-lucide-check' : 'i-lucide-refresh-cw'
 )
 const refreshButtonLabel = computed(() => {
-  if (refreshFeedback.value === 'loading' || isRefreshButtonLoading.value) return 'Atualizando notícias'
-  if (refreshFeedback.value === 'success') return 'Notícias atualizadas'
-  return 'Atualizar notícias'
+  if (refreshFeedback.value === 'loading' || isRefreshButtonLoading.value) return t('blog.refreshing')
+  if (refreshFeedback.value === 'success') return t('blog.refreshed')
+  return t('blog.refresh')
 })
 
 type Filter = 'todas' | NewsCategory
 type TopicFilter = 'todos' | NewsTopic
 
-const filters: Array<{ value: Filter, label: string, icon: string }> = [
-  { value: 'todas', label: 'Todas', icon: 'i-lucide-newspaper' },
-  { value: 'tecnologia', label: 'Tecnologia', icon: 'i-lucide-cpu' },
-  { value: 'ciberseguranca', label: 'Cibersegurança', icon: 'i-lucide-shield' }
-]
+const filters = computed(() => [
+  { value: 'todas' as const, label: t('blog.filters.all'), icon: 'i-lucide-newspaper' },
+  { value: 'tecnologia' as const, label: t('blog.filters.tech'), icon: 'i-lucide-cpu' },
+  { value: 'ciberseguranca' as const, label: t('blog.filters.cyber'), icon: 'i-lucide-shield' }
+])
 
-const techTopics: Array<{ value: TopicFilter, label: string, icon: string }> = [
-  { value: 'todos', label: 'Todos', icon: 'i-lucide-layout-grid' },
-  { value: 'ia', label: 'IA', icon: 'i-lucide-sparkles' },
-  { value: 'uiux', label: 'UI/UX', icon: 'i-lucide-palette' },
-  { value: 'programacao', label: 'Programação', icon: 'i-lucide-code' }
-]
+const techTopics = computed(() => [
+  { value: 'todos' as const, label: t('blog.filters.topicsAll'), icon: 'i-lucide-layout-grid' },
+  { value: 'ia' as const, label: t('topics.ia'), icon: 'i-lucide-sparkles' },
+  { value: 'uiux' as const, label: t('topics.uiux'), icon: 'i-lucide-palette' },
+  { value: 'programacao' as const, label: t('topics.programacao'), icon: 'i-lucide-code' }
+])
 
-const cyberTopics: Array<{ value: TopicFilter, label: string, icon: string }> = [
-  { value: 'todos', label: 'Todos', icon: 'i-lucide-layout-grid' },
-  { value: 'redteam', label: 'Red Team', icon: 'i-lucide-swords' },
-  { value: 'blueteam', label: 'Blue Team', icon: 'i-lucide-shield-check' },
-  { value: 'purpleteam', label: 'Purple Team', icon: 'i-lucide-blend' },
-  { value: 'lgpd-grc', label: 'LGPD & GRC', icon: 'i-lucide-scale' }
-]
+const cyberTopics = computed(() => [
+  { value: 'todos' as const, label: t('blog.filters.topicsAll'), icon: 'i-lucide-layout-grid' },
+  { value: 'ia' as const, label: t('topics.ia'), icon: 'i-lucide-sparkles' },
+  { value: 'redteam' as const, label: t('topics.redteam'), icon: 'i-lucide-swords' },
+  { value: 'blueteam' as const, label: t('topics.blueteam'), icon: 'i-lucide-shield-check' },
+  { value: 'purpleteam' as const, label: t('topics.purpleteam'), icon: 'i-lucide-blend' },
+  { value: 'lgpd-grc' as const, label: t('topics.lgpd-grc'), icon: 'i-lucide-scale' }
+])
 
 const activeFilter = ref<Filter>('todas')
 const activeTopic = ref<TopicFilter>('todos')
 
 const topicFilters = computed(() => {
-  if (activeFilter.value === 'tecnologia') return techTopics
-  if (activeFilter.value === 'ciberseguranca') return cyberTopics
+  if (activeFilter.value === 'tecnologia') return techTopics.value
+  if (activeFilter.value === 'ciberseguranca') return cyberTopics.value
   return []
 })
 
@@ -210,14 +217,26 @@ const items = computed(() => {
   return byCategory.filter(item => item.topic === activeTopic.value)
 })
 
+const languageTag = computed(() => {
+  if (locale.value === 'en') return 'en-US'
+  if (locale.value === 'es') return 'es-ES'
+  return 'pt-BR'
+})
+
 const updatedLabel = computed(() => {
   if (!syncedAt.value) return ''
-  return syncedAt.value.toLocaleTimeString('pt-BR', {
+  return syncedAt.value.toLocaleTimeString(languageTag.value, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit'
   })
 })
+
+const ctaLinks = computed(() => [{
+  label: t('blog.cta.link'),
+  color: 'primary',
+  to: localePath('contato')
+}])
 </script>
 
 <template>
@@ -226,7 +245,7 @@ const updatedLabel = computed(() => {
 
     <UPageSection
       :ui="{
-        root: 'relative z-10 pt-8 pb-16 sm:pt-10 sm:pb-24',
+        root: 'relative z-10 pt-20 pb-16 sm:pt-10 sm:pb-24',
         container: 'max-w-6xl'
       }"
     >
@@ -239,7 +258,7 @@ const updatedLabel = computed(() => {
           <UBadge
             color="neutral"
             variant="soft"
-            label="Feed ao vivo · atualiza a cada 2 min"
+            :label="t('blog.badge')"
             class="rounded-full px-3 py-1.5 gap-1.5 bg-white/5 backdrop-blur"
           >
             <template #leading>
@@ -256,7 +275,7 @@ const updatedLabel = computed(() => {
           class="primesec-enter mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] text-highlighted"
           style="--enter-delay: 0.25s"
         >
-          Radar de tecnologia
+          {{ t('blog.titlePrimary') }}
           <br>
           <span
             class="animate-shimmer bg-size-[200%_auto] bg-clip-text text-transparent"
@@ -265,7 +284,7 @@ const updatedLabel = computed(() => {
               animationDuration: '10s'
             }"
           >
-            e cibersegurança
+            {{ t('blog.titleSecondary') }}
           </span>
         </h1>
 
@@ -273,7 +292,7 @@ const updatedLabel = computed(() => {
           class="primesec-enter mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-dimmed"
           style="--enter-delay: 0.4s"
         >
-          O que está acontecendo agora no mundo da tecnologia e das ameaças digitais, agregado em tempo real de fontes brasileiras em português.
+          {{ t('blog.description') }}
         </p>
       </div>
 
@@ -324,7 +343,7 @@ const updatedLabel = computed(() => {
             v-if="updatedLabel"
             class="font-mono text-xs leading-none text-dimmed"
           >
-            atualizado às {{ updatedLabel }}
+            {{ t('blog.updatedAt', { time: updatedLabel }) }}
           </span>
           <UButton
             :icon="refreshButtonIcon"
@@ -372,10 +391,10 @@ const updatedLabel = computed(() => {
             class="size-8 text-dimmed"
           />
           <p class="max-w-sm text-sm leading-relaxed text-dimmed">
-            Não foi possível carregar o feed agora. Verifique sua conexão e tente novamente.
+            {{ t('blog.error') }}
           </p>
           <UButton
-            label="Tentar novamente"
+            :label="t('blog.retry')"
             color="primary"
             variant="soft"
             icon="i-lucide-refresh-cw"
@@ -394,7 +413,7 @@ const updatedLabel = computed(() => {
             class="size-8 text-dimmed"
           />
           <p class="max-w-sm text-sm leading-relaxed text-dimmed">
-            Nenhuma notícia neste filtro agora. Tente outro subtema ou atualize o feed.
+            {{ t('blog.empty') }}
           </p>
         </div>
 
@@ -425,15 +444,15 @@ const updatedLabel = computed(() => {
       </div>
 
       <p class="mt-4 mx-auto max-w-3xl text-center font-mono text-xs leading-relaxed text-dimmed">
-        Fontes: CISO Advisor, Canaltech, Tecnoblog, Olhar Digital, CryptoID, Security Leaders, Total Security, CERT.br e Google Notícias (PT-BR). Os links abrem no site original.
+        {{ t('blog.sources') }}
       </p>
     </UPageSection>
 
     <LazyHomeCta
-      title="Precisa de ajuda com o que leu por aqui?"
-      description="Da correção de uma vulnerabilidade ao próximo produto: nossos times de desenvolvimento e segurança podem ajudar."
-      command="priimesec@gmail.com"
-      :links="[{ label: 'Falar conosco', color: 'primary', to: '/contato' }]"
+      :title="t('blog.cta.title')"
+      :description="t('blog.cta.description')"
+      :command="ctaCommand"
+      :links="ctaLinks"
       :hydrate-on-visible="{ rootMargin: '200px' }"
     />
   </div>

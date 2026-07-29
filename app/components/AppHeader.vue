@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const nuxtApp = useNuxtApp()
 const route = useRoute()
+const { t } = useI18n()
+const localePath = useLocalePath()
 const activeSection = ref<string>()
 const scrolled = ref(false)
 /** Aberto via toque no hambúrguer (só no topo, em mobile). */
@@ -9,21 +11,24 @@ const bar = ref<HTMLElement>()
 
 const items = computed(() => [
   {
-    label: 'Serviços',
-    to: '/#features',
+    label: t('nav.services'),
+    to: `${localePath('index')}#features`,
     exactHash: true,
+    accent: 'lime' as const,
     active: activeSection.value === 'features'
   },
   {
-    label: 'Como atuamos',
-    to: '/#metrics',
+    label: t('nav.howWeWork'),
+    to: `${localePath('index')}#metrics`,
     exactHash: true,
+    accent: 'orange' as const,
     active: activeSection.value === 'metrics'
   },
   {
-    label: 'Blog',
-    to: '/blog',
-    active: route.path.startsWith('/blog')
+    label: t('nav.blog'),
+    to: localePath('blog'),
+    accent: 'purple' as const,
+    active: route.path.includes('/blog')
   }
 ])
 
@@ -86,12 +91,12 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
           : 'border border-transparent bg-transparent'"
       >
         <NuxtLink
-          to="/"
-          class="mt-1 shrink-0 sm:mt-2"
+          :to="localePath('index')"
+          class="primesec-brand-link mt-0.5 shrink-0 sm:mt-1"
           aria-label="PrimeSec"
           @click="closeMenu"
         >
-          <AppLogo class="h-11 w-11 sm:h-14 sm:w-14" />
+          <AppBrand />
         </NuxtLink>
 
         <!-- Mobile no topo: hambúrguer. Ao rolar (ou após toque), vira o menu aberto. -->
@@ -101,7 +106,7 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
           class="primesec-burger inline-flex md:hidden"
           :aria-expanded="expanded"
           aria-controls="primesec-primary-nav"
-          aria-label="Abrir menu"
+          :aria-label="t('nav.openMenu')"
           @click="toggleMenu"
         >
           <span aria-hidden="true" />
@@ -113,14 +118,17 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
           id="primesec-primary-nav"
           class="primesec-nav flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 lg:gap-2"
           :class="{ 'max-md:hidden': !expanded }"
-          aria-label="Navegação principal"
+          :aria-label="t('nav.primary')"
         >
           <NuxtLink
             v-for="item in items"
             :key="item.to"
             :to="item.to"
             class="primesec-nav-link"
-            :class="{ 'primesec-nav-link--active': item.active }"
+            :class="[
+              `primesec-nav-link--${item.accent}`,
+              { 'primesec-nav-link--active': item.active }
+            ]"
             @click="closeMenu"
           >
             <span
@@ -130,8 +138,10 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
             <span>{{ item.label }}</span>
           </NuxtLink>
 
+          <LocaleSwitcher />
+
           <NuxtLink
-            to="/contato"
+            :to="localePath('contato')"
             class="primesec-contact"
             @click="closeMenu"
           >
@@ -139,16 +149,18 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
               class="primesec-contact__shine"
               aria-hidden="true"
             />
-            <span class="relative z-10">Contato</span>
+            <span class="relative z-10">{{ t('nav.contact') }}</span>
             <svg
-              class="relative z-10 size-3 sm:size-3.5"
+              class="primesec-contact__icon relative z-10 size-3.5 sm:size-4"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
               aria-hidden="true"
             >
-              <path d="M5 12h14M13 6l6 6-6 6" />
+              <path d="M8.2 3.8 10 7.2a1.2 1.2 0 0 1-.3 1.4L8.4 9.9a10.2 10.2 0 0 0 5.7 5.7l1.3-1.3a1.2 1.2 0 0 1 1.4-.3l3.4 1.8a1.2 1.2 0 0 1 .7 1.3l-.6 2.7a1.2 1.2 0 0 1-1.2 1C10.4 20.4 3.6 13.6 3.2 5a1.2 1.2 0 0 1 1-1.2l2.7-.6a1.2 1.2 0 0 1 1.3.6Z" />
             </svg>
           </NuxtLink>
         </nav>

@@ -19,6 +19,22 @@ const TOPIC_RULES: TopicRule[] = [
     ]
   },
   {
+    topic: 'ia',
+    patterns: [
+      /\bintelig[eê]ncia artificial\b/i,
+      /\bIA\b/,
+      /\bmachine learning\b/i,
+      /\baprendizado de m[aá]quina\b/i,
+      /\bllm\b/i,
+      /\bChatGPT\b/i,
+      /\bopenai\b/i,
+      /\bdeep learning\b/i,
+      /\bmodelo(s)? de ia\b/i,
+      /\bgenai\b/i,
+      /\bgenerative ai\b/i
+    ]
+  },
+  {
     topic: 'purpleteam',
     patterns: [
       /\bpurple\s*team\b/i,
@@ -63,22 +79,6 @@ const TOPIC_RULES: TopicRule[] = [
       /\bfirewall\b/i,
       /\bpatch(es|ing)?\b/i,
       /\bcorre[cç][aã]o\b/i
-    ]
-  },
-  {
-    topic: 'ia',
-    patterns: [
-      /\bintelig[eê]ncia artificial\b/i,
-      /\bIA\b/,
-      /\bmachine learning\b/i,
-      /\baprendizado de m[aá]quina\b/i,
-      /\bllm\b/i,
-      /\bChatGPT\b/i,
-      /\bopenai\b/i,
-      /\bdeep learning\b/i,
-      /\bmodelo(s)? de ia\b/i,
-      /\bgenai\b/i,
-      /\bgenerative ai\b/i
     ]
   },
   {

@@ -2,59 +2,116 @@
 /**
  * Tela de carregamento exibida até o globo estar 100% renderizado.
  *
- * O letreiro de mensagens e o radar são animações CSS puras: eles já rodam no
- * HTML pré-renderizado, antes da hidratação, então nada aparece congelado.
- * A barra reflete o progresso real reportado pelo CyberGlobe, com um avanço
- * mínimo por tick para nunca parecer travada entre uma etapa e outra.
+ * O letreiro e o radar são CSS puro (já animam no HTML pré-renderizado).
+ * A % conta de 1 em 1: um script cedo (`/loader-count.js`) começa antes da
+ * hidratação; o Vue assume. A barra é o mesmo attack do nav (traço + signal).
  */
 const props = defineProps<{
   /** Progresso real da montagem do globo, de 0 a 1. */
   progress: number
 }>()
 
-const MESSAGES = [
-  'Analisando ameaças...',
-  'Carregando mapa global...',
-  'Sincronizando eventos...',
-  'Processando inteligência...',
-  'Identificando ataques...',
-  'Preparando visualização...',
-  'Finalizando carregamento...'
-]
-const TICK_MS = 100
+const emit = defineEmits<{
+  /** Disparado quando a contagem exibida termina em 100%. */
+  (e: 'done'): void
+}>()
 
-/** Valor suavizado; sobe sempre, nunca regride. */
-const displayed = ref(0)
-const percent = computed(() => Math.round(displayed.value * 100))
+const { tm, rt, locale } = useI18n()
 
-let ticker: ReturnType<typeof setInterval> | undefined
+const messages = computed(() => {
+  void locale.value
+  const raw = tm('loader.messages') as unknown[]
+  return raw.map(item => typeof item === 'string' ? item : rt(item as never))
+})
 
-onMounted(() => {
-  ticker = setInterval(() => {
-    const target = props.progress
-    if (target >= 1) {
-      displayed.value = 1
-      return
+declare global {
+  interface Window {
+    __primesecLoaderPercent?: number
+    __primesecLoaderTakeover?: boolean
+  }
+}
+
+function readPreloadPercent(): number {
+  if (!import.meta.client) return 0
+  const pre = window.__primesecLoaderPercent
+  return typeof pre === 'number' ? Math.min(96, Math.max(0, Math.round(pre))) : 0
+}
+
+/** Contagem inteira (0–100). Nunca salta mais de 1 por tick. */
+const percent = ref(import.meta.client ? readPreloadPercent() : 0)
+
+let timer: ReturnType<typeof setTimeout> | undefined
+let doneEmitted = false
+let startedAt = 0
+let running = false
+
+function targetPercent(now: number): number {
+  if (props.progress >= 1) return 100
+
+  const fromProp = Math.round(props.progress * 100)
+  // Avanço por tempo garante contagem mesmo sem eventos do globo.
+  const fromTime = Math.floor((now - startedAt) / 55)
+  return Math.min(97, Math.max(fromProp, fromTime, percent.value))
+}
+
+function schedule(next: () => void, ms: number) {
+  timer = setTimeout(() => {
+    requestAnimationFrame(next)
+  }, ms)
+}
+
+function tick() {
+  if (!running) return
+
+  const now = performance.now()
+  const target = targetPercent(now)
+
+  if (percent.value < target) {
+    percent.value += 1
+    window.__primesecLoaderPercent = percent.value
+  }
+
+  if (percent.value >= 100) {
+    if (!doneEmitted) {
+      doneEmitted = true
+      emit('done')
     }
-    // Enquanto a etapa não avança, rasteja devagar até um teto à frente dela.
-    const step = Math.max((target - displayed.value) * 0.28, 0.005)
-    displayed.value = Math.min(displayed.value + step, Math.min(target + 0.12, 0.97))
-  }, TICK_MS)
-})
+    return
+  }
 
-onBeforeUnmount(() => clearInterval(ticker))
+  const behind = target - percent.value
+  // Sprint final e recuperação após bloqueio da main thread: ainda +1, só mais rápido.
+  const delay = props.progress >= 1 ? 28 : behind > 3 ? 22 : 55
+  schedule(tick, delay)
+}
 
-// O 100% não pode esperar o próximo tick: em conexões rápidas a revelação chega
-// antes dele e a barra sairia de cena marcando uma porcentagem baixa.
-watch(() => props.progress, (value) => {
-  if (value >= 1) displayed.value = 1
-})
-
-// Trava a rolagem da página atrás do overlay (inclusive no HTML pré-renderizado).
 useHead({
   htmlAttrs: {
     class: 'overflow-hidden'
-  }
+  },
+  script: [
+    {
+      key: 'primesec-loader-count',
+      src: '/loader-count.js',
+      // Fetch cedo; executa após o parse (loader já está no DOM).
+      defer: true,
+      tagPosition: 'head'
+    }
+  ]
+})
+
+onMounted(() => {
+  // Só agora o Vue assume a contagem; até aqui o script cedo segue ativo.
+  window.__primesecLoaderTakeover = true
+  percent.value = Math.max(percent.value, readPreloadPercent())
+  startedAt = performance.now() - percent.value * 55
+  running = true
+  schedule(tick, 55)
+})
+
+onBeforeUnmount(() => {
+  running = false
+  clearTimeout(timer)
 })
 </script>
 
@@ -90,14 +147,13 @@ useHead({
         PrimeSec
       </p>
 
-      <!-- Letreiro: a coluna de mensagens sobe de uma em uma, em loop -->
       <div class="h-7 overflow-hidden">
         <div
           class="primesec-marquee"
-          :style="{ '--marquee-count': MESSAGES.length }"
+          :style="{ '--marquee-count': messages.length }"
         >
           <p
-            v-for="line in MESSAGES"
+            v-for="line in messages"
             :key="line"
             class="flex h-7 items-center justify-center font-mono text-base text-toned"
           >
@@ -107,22 +163,24 @@ useHead({
       </div>
     </div>
 
-    <div class="flex w-72 max-w-[70vw] items-center gap-4">
-      <div class="relative h-0.5 flex-1 overflow-hidden rounded-full bg-white/10">
-        <!-- Varredura em CSS: a barra tem vida mesmo antes da hidratação. -->
-        <span
-          class="absolute inset-y-0 w-1/5 animate-loader-scan bg-linear-to-r from-transparent via-primary/60 to-transparent"
-          aria-hidden="true"
-        />
+    <!-- Traço fino + signal luminoso (mesmo attack do nav/globo). % fixa à direita. -->
+    <div class="flex w-72 max-w-[70vw] items-center gap-3">
+      <div class="primesec-loader-bar">
         <div
-          class="relative h-full rounded-full bg-primary shadow-[0_0_10px_1px_var(--ui-primary)] ease-out"
-          :class="percent < 100 && 'transition-[width] duration-200'"
+          class="primesec-loader-bar__fill"
+          data-loader-fill
           :style="{ width: `${percent}%` }"
-        />
+        >
+          <span
+            class="primesec-loader-bar__signal"
+            aria-hidden="true"
+          />
+        </div>
       </div>
-      <span class="w-10 shrink-0 text-right font-mono text-xs tabular-nums text-muted">
-        {{ percent }}%
-      </span>
+      <span
+        data-loader-pct
+        class="w-9 shrink-0 text-right font-mono text-xs tabular-nums text-muted"
+      >{{ percent }}%</span>
     </div>
   </div>
 </template>

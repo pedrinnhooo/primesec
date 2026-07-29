@@ -2,7 +2,14 @@
 import type { FormError, FormSubmitEvent } from '@nuxt/ui'
 import { CONTACT_SUBJECTS } from '#shared/constants/contact'
 
-const subjects = [...CONTACT_SUBJECTS]
+const { t } = useI18n()
+
+const subjects = computed(() =>
+  CONTACT_SUBJECTS.map(value => ({
+    value,
+    label: t(`contact.subjects.${value}`)
+  }))
+)
 
 const state = reactive({
   name: '',
@@ -35,16 +42,16 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 function validate(data: typeof state): FormError[] {
   const errors: FormError[] = []
   if (!data.name.trim() || data.name.trim().length < 2) {
-    errors.push({ name: 'name', message: 'Informe seu nome.' })
+    errors.push({ name: 'name', message: t('contact.errors.name') })
   }
   if (!EMAIL_RE.test(data.email)) {
-    errors.push({ name: 'email', message: 'Informe um e-mail válido.' })
+    errors.push({ name: 'email', message: t('contact.errors.email') })
   }
   if (!data.subject) {
-    errors.push({ name: 'subject', message: 'Selecione um assunto.' })
+    errors.push({ name: 'subject', message: t('contact.errors.subject') })
   }
   if (data.message.trim().length < 10) {
-    errors.push({ name: 'message', message: 'Conte um pouco mais sobre o desafio (mínimo de 10 caracteres).' })
+    errors.push({ name: 'message', message: t('contact.errors.message') })
   }
   return errors
 }
@@ -65,8 +72,8 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
     await refreshChallenge()
     if (!challengeToken.value) {
       toast.add({
-        title: 'Não foi possível enviar',
-        description: 'Recarregue a página e tente novamente, ou escreva para priimesec@gmail.com.',
+        title: t('contact.toast.failTitle'),
+        description: t('contact.toast.failChallenge'),
         icon: 'i-lucide-alert-triangle',
         color: 'error'
       })
@@ -90,8 +97,8 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
     })
 
     toast.add({
-      title: 'Mensagem enviada!',
-      description: 'Recebemos seu contato e retornamos em até 1 dia útil.',
+      title: t('contact.toast.successTitle'),
+      description: t('contact.toast.successDescription'),
       icon: 'i-lucide-check-circle-2',
       color: 'success'
     })
@@ -107,8 +114,8 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
     await refreshChallenge()
   } catch {
     toast.add({
-      title: 'Não foi possível enviar',
-      description: 'Tente novamente ou escreva direto para priimesec@gmail.com.',
+      title: t('contact.toast.failTitle'),
+      description: t('contact.toast.failRetry'),
       icon: 'i-lucide-alert-triangle',
       color: 'error'
     })
@@ -144,14 +151,14 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 
     <div class="grid gap-5 sm:grid-cols-2 sm:gap-6">
       <UFormField
-        label="Nome"
+        :label="t('contact.fields.name')"
         name="name"
         required
         size="lg"
       >
         <UInput
           v-model="state.name"
-          placeholder="Como podemos te chamar?"
+          :placeholder="t('contact.fields.namePlaceholder')"
           size="xl"
           class="w-full"
           autocomplete="name"
@@ -161,7 +168,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
       </UFormField>
 
       <UFormField
-        label="E-mail"
+        :label="t('contact.fields.email')"
         name="email"
         required
         size="lg"
@@ -169,7 +176,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
         <UInput
           v-model="state.email"
           type="email"
-          placeholder="voce@empresa.com"
+          :placeholder="t('contact.fields.emailPlaceholder')"
           size="xl"
           class="w-full"
           autocomplete="email"
@@ -181,14 +188,14 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 
     <div class="grid gap-5 sm:grid-cols-2 sm:gap-6">
       <UFormField
-        label="Empresa"
+        :label="t('contact.fields.company')"
         name="company"
-        hint="Opcional"
+        :hint="t('contact.fields.companyHint')"
         size="lg"
       >
         <UInput
           v-model="state.company"
-          placeholder="Onde você atua"
+          :placeholder="t('contact.fields.companyPlaceholder')"
           size="xl"
           class="w-full"
           autocomplete="organization"
@@ -198,7 +205,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
       </UFormField>
 
       <UFormField
-        label="Assunto"
+        :label="t('contact.fields.subject')"
         name="subject"
         required
         size="lg"
@@ -206,7 +213,8 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
         <USelect
           v-model="state.subject"
           :items="subjects"
-          placeholder="Qual frente faz sentido?"
+          value-key="value"
+          :placeholder="t('contact.fields.subjectPlaceholder')"
           size="xl"
           class="w-full"
           :ui="fieldUi"
@@ -215,7 +223,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
     </div>
 
     <UFormField
-      label="Mensagem"
+      :label="t('contact.fields.message')"
       name="message"
       required
       size="lg"
@@ -223,7 +231,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
       <UTextarea
         v-model="state.message"
         :rows="5"
-        placeholder="Descreva o contexto, o prazo e o que você precisa resolver."
+        :placeholder="t('contact.fields.messagePlaceholder')"
         size="xl"
         class="w-full"
         maxlength="4000"
@@ -237,7 +245,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
       </p>
       <UButton
         type="submit"
-        label="Enviar mensagem"
+        :label="t('contact.fields.submit')"
         icon="i-lucide-send"
         size="xl"
         class="w-full shrink-0 sm:w-auto sm:min-w-56"

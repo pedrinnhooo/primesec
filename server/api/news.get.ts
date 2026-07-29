@@ -77,6 +77,15 @@ const RSS_SOURCES: RssSourceConfig[] = [
   },
   // Subtemas cyber (Google Notícias PT-BR) — volume baixo, queries precisas
   {
+    url: googleNewsUrl('(("inteligência artificial" OR IA OR "machine learning" OR ChatGPT OR LLM) (cibersegurança OR cybersecurity OR ransomware OR malware OR "segurança da informação"))'),
+    source: 'Google Notícias',
+    sourceIcon: 'i-simple-icons-googlenews',
+    category: 'ciberseguranca',
+    balanceKey: 'google-news',
+    topic: 'ia',
+    limit: 8
+  },
+  {
     url: googleNewsUrl('("red team" OR pentest OR "teste de invasão") (cibersegurança OR cybersecurity OR segurança)'),
     source: 'Google Notícias',
     sourceIcon: 'i-simple-icons-googlenews',
@@ -332,7 +341,7 @@ export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
   }
 }, {
   name: 'live-news',
-  getKey: () => 'ptbr-topics-v4',
+  getKey: () => 'ptbr-topics-v5',
   maxAge: 120,
   swr: false,
   shouldBypassCache: (event) => {

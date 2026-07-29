@@ -5,32 +5,42 @@ const props = defineProps<{
   item: NewsItem
 }>()
 
+const { t, locale } = useI18n()
+const formatTimeAgo = useTimeAgo()
+
 /** Cores únicas por badge — nunca repetir entre categoria e subtema. */
-const categoryMeta: Record<NewsCategory, { label: string, class: string }> = {
-  tecnologia: {
-    label: 'Tecnologia',
-    class: '!bg-sky-400/15 !text-sky-300'
-  },
-  ciberseguranca: {
-    label: 'Cibersegurança',
-    class: '!bg-emerald-400/15 !text-emerald-300'
-  }
+const categoryClass: Record<NewsCategory, string> = {
+  tecnologia: '!bg-sky-400/15 !text-sky-300',
+  ciberseguranca: '!bg-emerald-400/15 !text-emerald-300'
 }
 
-const topicMeta: Record<NewsTopic, { label: string, class: string }> = {
-  ia: { label: 'IA', class: '!bg-violet-400/15 !text-violet-300' },
-  uiux: { label: 'UI/UX', class: '!bg-amber-400/15 !text-amber-300' },
-  programacao: { label: 'Programação', class: '!bg-teal-400/15 !text-teal-300' },
-  redteam: { label: 'Red Team', class: '!bg-red-400/15 !text-red-300' },
-  blueteam: { label: 'Blue Team', class: '!bg-blue-400/15 !text-blue-300' },
-  purpleteam: { label: 'Purple Team', class: '!bg-fuchsia-400/15 !text-fuchsia-300' },
-  'lgpd-grc': { label: 'LGPD & GRC', class: '!bg-orange-400/15 !text-orange-300' }
+const topicClass: Record<NewsTopic, string> = {
+  ia: '!bg-violet-400/15 !text-violet-300',
+  uiux: '!bg-amber-400/15 !text-amber-300',
+  programacao: '!bg-teal-400/15 !text-teal-300',
+  redteam: '!bg-red-400/15 !text-red-300',
+  blueteam: '!bg-blue-400/15 !text-blue-300',
+  purpleteam: '!bg-fuchsia-400/15 !text-fuchsia-300',
+  'lgpd-grc': '!bg-orange-400/15 !text-orange-300'
 }
 
-const categoryBadge = computed(() => categoryMeta[props.item.category])
+const categoryBadge = computed(() => ({
+  label: t(`categories.${props.item.category}`),
+  class: categoryClass[props.item.category]
+}))
+
 const topicBadge = computed(() => {
   const topic = props.item.topic
-  return topic ? topicMeta[topic] : null
+  if (!topic) return null
+  return {
+    label: t(`topics.${topic}`),
+    class: topicClass[topic]
+  }
+})
+
+const relativeTime = computed(() => {
+  void locale.value
+  return formatTimeAgo(props.item.publishedAt)
 })
 </script>
 
@@ -69,7 +79,7 @@ const topicBadge = computed(() => {
         :datetime="item.publishedAt"
         class="shrink-0 font-mono text-xs text-dimmed"
       >
-        {{ timeAgo(item.publishedAt) }}
+        {{ relativeTime }}
       </time>
     </div>
 

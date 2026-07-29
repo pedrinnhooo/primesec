@@ -98,6 +98,12 @@ async function build() {
   const sphereSegs = isSmallScreen ? 32 : 48
   const starCount = isSmallScreen ? 480 : 900
 
+  // Libera a main thread para a contagem do loader pintar 0%→N% antes do
+  // trabalho síncrono pesado (WebGL + geometrias).
+  emit('progress', 0.05)
+  await yieldToPaint()
+  if (disposed) return
+
   // As fronteiras são o maior download da cena: começa antes de qualquer
   // trabalho de GPU para viajar em paralelo com a montagem.
   const countryGeometry = loadCountryLines(RADIUS * 1.004)
@@ -118,6 +124,8 @@ async function build() {
   // Elevação leve para enquadrar o hemisfério norte sem cortar o globo.
   camera.position.set(0, 0.38, INITIAL_CAMERA_DISTANCE)
   emit('progress', 0.15)
+  await yieldToPaint()
+  if (disposed) return
 
   // --- Luzes ------------------------------------------------------------
   scene.add(new THREE.AmbientLight(0x9db89d, 0.55))
@@ -183,6 +191,9 @@ async function build() {
     blending: THREE.AdditiveBlending
   })
   globe.add(new THREE.Points(cityGeometry, cityMaterial))
+  emit('progress', 0.25)
+  await yieldToPaint()
+  if (disposed) return
 
   // --- Estrelas + neblina espacial ---------------------------------------
   const starGeometry = new THREE.BufferGeometry()
