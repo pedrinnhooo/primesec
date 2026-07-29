@@ -23,6 +23,7 @@ const TOPIC_RULES: TopicRule[] = [
     patterns: [
       /\bintelig[eê]ncia artificial\b/i,
       /\bIA\b/,
+      /\bIAs\b/,
       /\bmachine learning\b/i,
       /\baprendizado de m[aá]quina\b/i,
       /\bllm\b/i,
@@ -52,16 +53,15 @@ const TOPIC_RULES: TopicRule[] = [
       /\bpentest\b/i,
       /\bpenetration\s*test\b/i,
       /\bteste de invas[aã]o\b/i,
-      /\boffensive\b/i,
-      /\bexploit\b/i,
-      /\bransomware\b/i,
-      /\bmalware\b/i,
-      /\bataque\b/i,
-      /\bhacker\b/i,
+      /\boffensive\s*(security|sec)?\b/i,
+      /\bexploit(ation|ar|a[cç][aã]o)?\b/i,
+      /\bprova de conceito\b/i,
+      /\bproof[\s-]of[\s-]concept\b/i,
       /\bzero[\s-]?day\b/i,
-      /\bcves?\b/i,
-      /\bvulnerabilidade(s)?\b/i,
-      /\brce\b/i
+      /\brce\b/i,
+      /\bremote\s*code\s*execution\b/i,
+      /\binvas[aã]o\b/i,
+      /\bethical\s*hack(er|ing)?\b/i
     ]
   },
   {
@@ -78,7 +78,13 @@ const TOPIC_RULES: TopicRule[] = [
       /\bedr\b/i,
       /\bfirewall\b/i,
       /\bpatch(es|ing)?\b/i,
-      /\bcorre[cç][aã]o\b/i
+      /\bcorre[cç][aã]o\b/i,
+      /\bransomware\b/i,
+      /\bmalware\b/i,
+      /\bcves?\b/i,
+      /\bvulnerabilidade(s)?\b/i,
+      /\bataque\s*(cibern[eé]tico|de\s*ransomware|de\s*phishing)\b/i,
+      /\bhacker(s)?\b/i
     ]
   },
   {
@@ -95,26 +101,71 @@ const TOPIC_RULES: TopicRule[] = [
     ]
   },
   {
-    topic: 'programacao',
+    topic: 'frontend',
     patterns: [
-      /\bdesenvolvimento de software\b/i,
       /\bfront[\s-]?end\b/i,
-      /\bback[\s-]?end\b/i,
-      /\bfull[\s-]?stack\b/i,
-      /\bdesenvolvedor(es|a)?\b/i,
-      /\bengenheir[oa]s? de software\b/i,
-      /\bjavascript\b/i,
-      /\btypescript\b/i,
-      /\bpython\b/i,
+      /\bfrontend\b/i,
       /\breact(\s*native)?\b/i,
+      /\bnext\.?js\b/i,
+      /\bvue\.?js\b/i,
+      /\bnuxt\b/i,
+      /\bangular\b/i,
+      /\bsvelte(kit)?\b/i,
+      /\btailwind\b/i,
+      /\bcss\b/i,
+      /\bhtml5?\b/i,
+      /\btypescript\b/i,
+      /\bjavascript\b/i,
+      /\bweb\s*component(s)?\b/i,
+      /\bspa\b/i,
+      /\bpwa\b/i
+    ]
+  },
+  {
+    topic: 'backend',
+    patterns: [
+      /\bback[\s-]?end\b/i,
+      /\bbackend\b/i,
       /\bnode\.?js\b/i,
+      /\bexpress\.?js\b/i,
+      /\bnest\.?js\b/i,
+      /\bdjango\b/i,
+      /\bflask\b/i,
+      /\bfastapi\b/i,
+      /\bspring\s*boot\b/i,
+      /\bapi\s*rest\b/i,
+      /\bgraphql\b/i,
+      /\bmicroservi[cç]o(s)?\b/i,
+      /\bserver[\s-]?side\b/i,
+      /\bgolang\b/i,
+      /\brust\b/i,
       /\bkotlin\b/i,
-      /\bswift\b/i,
-      /\bframework\b/i,
-      /\bgit(hub)?\b/i,
-      /\bdevops\b/i,
-      /\bopen[\s-]?source\b/i,
-      /\bc[oó]digo[\s-]fonte\b/i
+      /\bdotnet\b/i,
+      /\b\.net\b/i,
+      /\blaravel\b/i,
+      /\brails\b/i
+    ]
+  },
+  {
+    topic: 'database',
+    patterns: [
+      /\bdatabase(s)?\b/i,
+      /\bsql\b/i,
+      /\bnosql\b/i,
+      /\bpostgres(ql)?\b/i,
+      /\bmysql\b/i,
+      /\bmariadb\b/i,
+      /\bmongodb\b/i,
+      /\bredis\b/i,
+      /\belasticsearch\b/i,
+      /\bdynamodb\b/i,
+      /\bcassandra\b/i,
+      /\bsqlite\b/i,
+      /\boracle\s*db\b/i,
+      /\bprisma\b/i,
+      /\bdata\s*warehouse\b/i,
+      /\betl\b/i,
+      /\bbanco(s)?\s+de\s+dados\s+(relacional|sql|nosql|em\s+nuvem)\b/i
     ]
   }
 ]
@@ -137,6 +188,7 @@ export function inferNewsTopic(
 
 /** Confere se o texto casa com os padrões de um subtema específico. */
 export function matchesTopic(text: string, topic: NewsTopic): boolean {
+  if (topic === 'geral') return true
   const rule = TOPIC_RULES.find(entry => entry.topic === topic)
   return rule ? rule.patterns.some(pattern => pattern.test(text)) : false
 }

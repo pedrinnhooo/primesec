@@ -131,7 +131,18 @@ useHead({
     </Transition>
 
     <!-- Full-bleed cyber threat globe behind hero + header area -->
-    <div class="absolute inset-x-0 top-0 z-0 h-[min(100vh,56rem)] overflow-hidden">
+    <div
+      class="absolute inset-x-0 top-0 z-0 h-[min(100vh,56rem)] overflow-hidden"
+      style="-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);"
+    >
+      <!-- Galáxia mono (preto + estrelas) atrás do globo — idle p/ não competir com o WebGL. -->
+      <LazyGalaxyBanner
+        class="absolute inset-0"
+        palette="mono"
+        density="medium"
+        :attacks="false"
+        hydrate-on-idle
+      />
       <!-- Globo estático (SSR): aparece junto com o site e some em crossfade -->
       <div
         class="pointer-events-none absolute inset-x-0 top-0 -bottom-[10%] flex items-center justify-center transition-opacity duration-500 ease-out"
@@ -157,7 +168,7 @@ useHead({
         @ready="globeReady = true"
       />
       <GradientGlow class="top-0 w-2/3 h-1/2" />
-      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-linear-to-t from-(--ui-bg) to-transparent" />
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-64 sm:h-80 bg-linear-to-t from-(--ui-bg) from-5% via-(--ui-bg)/70 via-45% to-transparent" />
       <div
         class="primesec-enter absolute left-4 xl:left-8 top-[54%] -translate-y-1/2 hidden xl:block"
         style="--enter-delay: 1.1s"

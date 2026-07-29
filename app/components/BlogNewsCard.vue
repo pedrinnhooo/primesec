@@ -15,9 +15,12 @@ const categoryClass: Record<NewsCategory, string> = {
 }
 
 const topicClass: Record<NewsTopic, string> = {
+  geral: '!bg-zinc-400/15 !text-zinc-300',
   ia: '!bg-violet-400/15 !text-violet-300',
   uiux: '!bg-amber-400/15 !text-amber-300',
-  programacao: '!bg-teal-400/15 !text-teal-300',
+  frontend: '!bg-cyan-400/15 !text-cyan-300',
+  backend: '!bg-lime-400/15 !text-lime-300',
+  database: '!bg-rose-400/15 !text-rose-300',
   redteam: '!bg-red-400/15 !text-red-300',
   blueteam: '!bg-blue-400/15 !text-blue-300',
   purpleteam: '!bg-fuchsia-400/15 !text-fuchsia-300',
@@ -101,6 +104,20 @@ const relativeTime = computed(() => {
           class="size-3.5 shrink-0"
         />
         <span class="truncate">{{ item.source }}</span>
+      </span>
+      <span class="inline-flex items-center gap-1">
+        <UIcon
+          name="i-lucide-arrow-big-up"
+          class="size-3.5"
+        />
+        {{ item.points }}
+      </span>
+      <span class="inline-flex items-center gap-1">
+        <UIcon
+          name="i-lucide-message-square"
+          class="size-3.5"
+        />
+        {{ item.comments }}
       </span>
       <UIcon
         name="i-lucide-arrow-up-right"

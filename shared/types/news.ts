@@ -2,9 +2,12 @@ export type NewsCategory = 'tecnologia' | 'ciberseguranca'
 
 /** Subtema opcional dentro de uma categoria. */
 export type NewsTopic =
+  | 'geral'
   | 'ia'
   | 'uiux'
-  | 'programacao'
+  | 'frontend'
+  | 'backend'
+  | 'database'
   | 'redteam'
   | 'blueteam'
   | 'purpleteam'

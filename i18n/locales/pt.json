@@ -16,6 +16,7 @@
     }
   },
   "footer": {
+    "tagline": "Desenvolvimento de software e segurança da informação.",
     "rights": "© {year}"
   },
   "home": {
@@ -257,7 +258,7 @@
     "error": "Não foi possível carregar o feed agora. Verifique sua conexão e tente novamente.",
     "retry": "Tentar novamente",
     "empty": "Nenhuma notícia neste filtro agora. Tente outro subtema ou atualize o feed.",
-    "sources": "Fontes: CISO Advisor, Canaltech, Tecnoblog, Olhar Digital, CryptoID, Security Leaders, Total Security, CERT.br e Google Notícias (PT-BR). Os links abrem no site original.",
+    "sources": "Fontes do Brasil, EUA e Espanha (CISO Advisor, Canaltech, Tecnoblog, TechCrunch, The Verge, The Hacker News, Xataka, Hacker News, DEV Community e Google Notícias). Títulos traduzidos para o idioma do site; os links abrem no original.",
     "filters": {
       "all": "Todas",
       "tech": "Tecnologia",
@@ -275,9 +276,12 @@
     "ciberseguranca": "Cibersegurança"
   },
   "topics": {
+    "geral": "Geral",
     "ia": "IA",
     "uiux": "UI/UX",
-    "programacao": "Programação",
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "database": "Banco de dados",
     "redteam": "Red Team",
     "blueteam": "Blue Team",
     "purpleteam": "Purple Team",

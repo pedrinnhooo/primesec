@@ -25,11 +25,24 @@ useSeoMeta({
 
 const ctaCommand = CONTACT_EMAIL
 
+const newsLang = computed(() => {
+  if (locale.value === 'en' || locale.value === 'es') return locale.value
+  return 'pt'
+})
+
 // Fetch só no client: a página é prerenderizada como casca estática
-// e o feed hidrata "ao vivo" no navegador.
+// e o feed hidrata "ao vivo" no navegador — idioma acompanha o locale.
 const { data: feed, status, error, refresh } = await useFetch<NewsFeed>('/api/news', {
   server: false,
-  lazy: true
+  lazy: true,
+  query: { lang: newsLang },
+  watch: [newsLang]
+})
+
+watch(newsLang, () => {
+  syncedAt.value = null
+  activeFilter.value = 'todas'
+  activeTopic.value = 'todos'
 })
 
 const toast = useToast()
@@ -124,7 +137,7 @@ async function refreshFeed(manual = false) {
     // Auto (2 min): usa cache até expirar (maxAge 120s), aí vem fresco.
     if (manual) {
       const next = await $fetch<NewsFeed>('/api/news', {
-        query: { fresh: '1' }
+        query: { fresh: '1', lang: newsLang.value }
       })
       feed.value = next
       error.value = undefined
@@ -180,9 +193,12 @@ const filters = computed(() => [
 
 const techTopics = computed(() => [
   { value: 'todos' as const, label: t('blog.filters.topicsAll'), icon: 'i-lucide-layout-grid' },
+  { value: 'geral' as const, label: t('topics.geral'), icon: 'i-lucide-layers' },
   { value: 'ia' as const, label: t('topics.ia'), icon: 'i-lucide-sparkles' },
   { value: 'uiux' as const, label: t('topics.uiux'), icon: 'i-lucide-palette' },
-  { value: 'programacao' as const, label: t('topics.programacao'), icon: 'i-lucide-code' }
+  { value: 'frontend' as const, label: t('topics.frontend'), icon: 'i-lucide-panel-top' },
+  { value: 'backend' as const, label: t('topics.backend'), icon: 'i-lucide-server' },
+  { value: 'database' as const, label: t('topics.database'), icon: 'i-lucide-database' }
 ])
 
 const cyberTopics = computed(() => [
@@ -241,7 +257,20 @@ const ctaLinks = computed(() => [{
 
 <template>
   <div class="relative">
-    <GradientGlow class="top-0 w-2/3 h-96" />
+    <!-- Galáxia + attacks (mesma linguagem visual do globo da Home) -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(72vh,40rem)] overflow-hidden"
+      style="-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);"
+    >
+      <LazyGalaxyBanner
+        class="absolute inset-0"
+        palette="green"
+        density="medium"
+        hydrate-on-idle
+      />
+      <GradientGlow class="top-0 w-3/4 h-[55%] opacity-40" />
+      <div class="absolute inset-x-0 bottom-0 h-56 sm:h-72 bg-linear-to-t from-(--ui-bg) from-5% via-(--ui-bg)/70 via-45% to-transparent" />
+    </div>
 
     <UPageSection
       :ui="{

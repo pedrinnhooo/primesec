@@ -1,7 +1,27 @@
 import { createHash } from 'node:crypto'
 import type { NewsCategory, NewsFeed, NewsItem, NewsTopic } from '#shared/types/news'
+import { fetchDevTo, fetchHackerNews } from '../utils/news-apis'
+import {
+  looksLikeCyberNews,
+  shouldKeepNews
+} from '../utils/news-filter'
+import { resolveNewsLang } from '../utils/news-lang'
+import {
+  allRssSources,
+  isGoogleNewsSource,
+  type RssSourceConfig
+} from '../utils/news-sources'
 import { inferNewsTopic, matchesTopic } from '../utils/news-topics'
+import { translateNewsItems } from '../utils/news-translate'
 import { parseRss } from '../utils/rss'
+
+/** Subtemas exclusivos de cibersegurança — não devem ficar em Tecnologia. */
+const CYBER_ONLY_TOPICS = new Set<NewsTopic>([
+  'redteam',
+  'blueteam',
+  'purpleteam',
+  'lgpd-grc'
+])
 
 const FETCH_OPTIONS = {
   timeout: 10_000,
@@ -13,211 +33,40 @@ const FETCH_OPTIONS = {
   }
 }
 
-interface RssSourceConfig {
-  url: string
-  source: string
-  sourceIcon: string
-  category: NewsCategory
-  /** Chave de balanceamento (agrupa feeds do mesmo veículo). */
-  balanceKey: string
-  /** Força o subtema quando o feed já é temático. */
-  topic?: NewsTopic
-  limit?: number
-}
-
-const RSS_SOURCES: RssSourceConfig[] = [
-  // —— Cibersegurança (PT-BR) ——
-  {
-    url: 'https://www.cisoadvisor.com.br/feed/',
-    source: 'CISO Advisor',
-    sourceIcon: 'i-lucide-shield-alert',
-    category: 'ciberseguranca',
-    balanceKey: 'ciso-advisor',
-    limit: 28
-  },
-  {
-    url: 'https://canaltech.com.br/rss/seguranca/',
-    source: 'Canaltech',
-    sourceIcon: 'i-lucide-cpu',
-    category: 'ciberseguranca',
-    balanceKey: 'canaltech',
-    limit: 16
-  },
-  {
-    url: 'https://cryptoid.com.br/feed/',
-    source: 'CryptoID',
-    sourceIcon: 'i-lucide-fingerprint',
-    category: 'ciberseguranca',
-    balanceKey: 'cryptoid',
-    limit: 12
-  },
-  {
-    url: 'https://securityleaders.com.br/feed/',
-    source: 'Security Leaders',
-    sourceIcon: 'i-lucide-shield',
-    category: 'ciberseguranca',
-    balanceKey: 'security-leaders',
-    limit: 12
-  },
-  {
-    url: 'https://totalsecurity.com.br/feed/seguranca.xml',
-    source: 'Total Security',
-    sourceIcon: 'i-lucide-lock',
-    category: 'ciberseguranca',
-    balanceKey: 'total-security',
-    limit: 14
-  },
-  {
-    url: 'https://www.cert.br/rss/certbr-rss.xml',
-    source: 'CERT.br',
-    sourceIcon: 'i-lucide-landmark',
-    category: 'ciberseguranca',
-    balanceKey: 'cert-br',
-    limit: 10
-  },
-  // Subtemas cyber (Google Notícias PT-BR) — volume baixo, queries precisas
-  {
-    url: googleNewsUrl('(("inteligência artificial" OR IA OR "machine learning" OR ChatGPT OR LLM) (cibersegurança OR cybersecurity OR ransomware OR malware OR "segurança da informação"))'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'ciberseguranca',
-    balanceKey: 'google-news',
-    topic: 'ia',
-    limit: 8
-  },
-  {
-    url: googleNewsUrl('("red team" OR pentest OR "teste de invasão") (cibersegurança OR cybersecurity OR segurança)'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'ciberseguranca',
-    balanceKey: 'google-news',
-    topic: 'redteam',
-    limit: 8
-  },
-  {
-    url: googleNewsUrl('("blue team" OR "security operations" OR SIEM OR XDR) (cibersegurança OR "resposta a incidentes")'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'ciberseguranca',
-    balanceKey: 'google-news',
-    topic: 'blueteam',
-    limit: 8
-  },
-  {
-    url: googleNewsUrl('"purple team" (cibersegurança OR cybersecurity OR segurança)'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'ciberseguranca',
-    balanceKey: 'google-news',
-    topic: 'purpleteam',
-    limit: 6
-  },
-  {
-    url: googleNewsUrl('(LGPD OR ANPD OR "proteção de dados") (empresa OR vazamento OR multa OR conformidade)'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'ciberseguranca',
-    balanceKey: 'google-news',
-    topic: 'lgpd-grc',
-    limit: 8
-  },
-
-  // —— Tecnologia (PT-BR) ——
-  {
-    url: 'https://tecnoblog.net/feed/',
-    source: 'Tecnoblog',
-    sourceIcon: 'i-lucide-newspaper',
-    category: 'tecnologia',
-    balanceKey: 'tecnoblog',
-    limit: 20
-  },
-  {
-    url: 'https://canaltech.com.br/rss/',
-    source: 'Canaltech',
-    sourceIcon: 'i-lucide-cpu',
-    category: 'tecnologia',
-    balanceKey: 'canaltech',
-    limit: 18
-  },
-  {
-    url: 'https://olhardigital.com.br/feed/',
-    source: 'Olhar Digital',
-    sourceIcon: 'i-lucide-eye',
-    category: 'tecnologia',
-    balanceKey: 'olhar-digital',
-    limit: 12
-  },
-  {
-    url: 'https://totalsecurity.com.br/feed.xml',
-    source: 'Total Security',
-    sourceIcon: 'i-lucide-lock',
-    category: 'tecnologia',
-    balanceKey: 'total-security',
-    limit: 10
-  },
-  // Subtemas tech
-  {
-    url: 'https://canaltech.com.br/rss/inteligencia-artificial/',
-    source: 'Canaltech',
-    sourceIcon: 'i-lucide-cpu',
-    category: 'tecnologia',
-    balanceKey: 'canaltech',
-    topic: 'ia',
-    limit: 16
-  },
-  {
-    url: 'https://olhardigital.com.br/tag/inteligencia-artificial/feed/',
-    source: 'Olhar Digital',
-    sourceIcon: 'i-lucide-eye',
-    category: 'tecnologia',
-    balanceKey: 'olhar-digital',
-    topic: 'ia',
-    limit: 10
-  },
-  {
-    url: googleNewsUrl('("UI/UX" OR "experiência do usuário" OR "design de interface" OR Figma) (produto OR app OR site)'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'tecnologia',
-    balanceKey: 'google-news',
-    topic: 'uiux',
-    limit: 8
-  },
-  {
-    url: 'https://canaltech.com.br/rss/software/',
-    source: 'Canaltech',
-    sourceIcon: 'i-lucide-cpu',
-    category: 'tecnologia',
-    balanceKey: 'canaltech',
-    topic: 'programacao',
-    limit: 16
-  },
-  {
-    url: googleNewsUrl('("desenvolvimento de software" OR frontend OR backend OR "engenharia de software" OR TypeScript OR "React Native")'),
-    source: 'Google Notícias',
-    sourceIcon: 'i-simple-icons-googlenews',
-    category: 'tecnologia',
-    balanceKey: 'google-news',
-    topic: 'programacao',
-    limit: 10
-  }
-]
-
-function googleNewsUrl(query: string): string {
-  const params = new URLSearchParams({
-    q: query,
-    hl: 'pt-BR',
-    gl: 'BR',
-    ceid: 'BR:pt-419'
-  })
-  return `https://news.google.com/rss/search?${params.toString()}`
-}
-
 function itemId(source: string, url: string): string {
   return createHash('sha1').update(`${source}:${url}`).digest('hex').slice(0, 16)
 }
 
-async function fetchRssSource(config: RssSourceConfig): Promise<Array<NewsItem & { balanceKey: string }>> {
+function resolveTopic(haystack: string, preferred?: NewsTopic): NewsTopic | undefined {
+  if (preferred && preferred !== 'geral' && matchesTopic(haystack, preferred)) {
+    return preferred
+  }
+  return inferNewsTopic(haystack)
+}
+
+function resolveCategory(
+  configCategory: NewsCategory,
+  topic: NewsTopic | undefined,
+  haystack: string
+): NewsCategory {
+  if (topic && CYBER_ONLY_TOPICS.has(topic)) return 'ciberseguranca'
+  if (configCategory === 'tecnologia' && looksLikeCyberNews(haystack)) {
+    return 'ciberseguranca'
+  }
+  return configCategory
+}
+
+/** Tecnologia sem subtema específico → Geral (aparece no filtro). */
+function withGeralTopic(item: NewsItem & { balanceKey: string }): NewsItem & { balanceKey: string } {
+  if (item.category === 'tecnologia' && !item.topic) {
+    return { ...item, topic: 'geral' }
+  }
+  return item
+}
+
+async function fetchRssSource(
+  config: RssSourceConfig
+): Promise<Array<NewsItem & { balanceKey: string }>> {
   const xml = await $fetch<string>(config.url, FETCH_OPTIONS)
   if (typeof xml !== 'string' || !xml.includes('<item')) {
     throw createError({ statusCode: 502, statusMessage: `Feed inválido: ${config.source}` })
@@ -228,36 +77,81 @@ async function fetchRssSource(config: RssSourceConfig): Promise<Array<NewsItem &
   return parsed.flatMap((entry) => {
     const haystack = [entry.title, entry.description || '', ...entry.categories].join(' ')
 
-    // Google Notícias é amplo: filtra ruído, exceto Purple Team (poucas matérias em PT-BR).
+    if (!shouldKeepNews(haystack, config.requireRelevance)) {
+      return []
+    }
+
     if (
       config.topic
+      && config.topic !== 'geral'
       && config.balanceKey === 'google-news'
-      && config.topic !== 'purpleteam'
       && !matchesTopic(haystack, config.topic)
     ) {
       return []
     }
 
-    const topic = inferNewsTopic(haystack, config.topic)
-    const sourceName = entry.publisher && config.source === 'Google Notícias'
-      ? `${entry.publisher} via Google Notícias`
+    const topic = resolveTopic(haystack, config.topic)
+    const category = resolveCategory(config.category, topic, haystack)
+    const sourceName = entry.publisher && isGoogleNewsSource(config.source)
+      ? `${entry.publisher} via ${config.source}`
       : config.source
 
-    return [{
+    return [withGeralTopic({
       id: itemId(config.balanceKey, entry.link),
       title: entry.title,
       url: entry.link,
       source: sourceName,
       sourceIcon: config.sourceIcon,
-      category: config.category,
+      category,
       topic,
       publishedAt: entry.publishedAt,
       points: 0,
       comments: 0,
       description: entry.description,
       balanceKey: config.balanceKey
-    }]
+    })]
   })
+}
+
+function engagementLoaders(): Array<() => Promise<NewsItem[]>> {
+  return [
+    () => fetchHackerNews({
+      category: 'tecnologia',
+      topic: 'frontend',
+      query: 'frontend OR react OR vue OR "next.js" OR css',
+      limit: 12
+    }),
+    () => fetchHackerNews({
+      category: 'tecnologia',
+      topic: 'backend',
+      query: 'backend OR "node.js" OR api OR graphql OR django OR fastapi',
+      limit: 12
+    }),
+    () => fetchHackerNews({
+      category: 'tecnologia',
+      topic: 'database',
+      query: 'database OR postgres OR postgresql OR mysql OR mongodb OR redis OR sql',
+      limit: 12
+    }),
+    () => fetchDevTo({ tag: 'frontend', category: 'tecnologia', topic: 'frontend', limit: 10 }),
+    () => fetchDevTo({ tag: 'react', category: 'tecnologia', topic: 'frontend', limit: 8 }),
+    () => fetchDevTo({ tag: 'backend', category: 'tecnologia', topic: 'backend', limit: 10 }),
+    () => fetchDevTo({ tag: 'node', category: 'tecnologia', topic: 'backend', limit: 8 }),
+    () => fetchDevTo({ tag: 'database', category: 'tecnologia', topic: 'database', limit: 10 }),
+    () => fetchDevTo({ tag: 'sql', category: 'tecnologia', topic: 'database', limit: 8 }),
+    () => fetchDevTo({ tag: 'postgres', category: 'tecnologia', topic: 'database', limit: 6 }),
+    () => fetchDevTo({ tag: 'security', category: 'ciberseguranca', topic: 'blueteam', limit: 8 }),
+    () => fetchHackerNews({
+      category: 'ciberseguranca',
+      topic: 'redteam',
+      query: 'vulnerability OR exploit OR ransomware OR "security"',
+      limit: 10
+    })
+  ]
+}
+
+function withBalanceKey(item: NewsItem, balanceKey: string): NewsItem & { balanceKey: string } {
+  return { ...item, balanceKey }
 }
 
 /** Intercala itens de várias fontes para nenhuma dominar o feed. */
@@ -292,8 +186,23 @@ function interleaveBySource(
   return balanced
 }
 
-export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
-  const results = await Promise.allSettled(RSS_SOURCES.map(fetchRssSource))
+export default defineCachedEventHandler(async (event): Promise<NewsFeed> => {
+  const query = getQuery(event)
+  const lang = resolveNewsLang(query.lang)
+
+  const sources = allRssSources()
+  const loaders = engagementLoaders()
+
+  const results = await Promise.allSettled([
+    ...sources.map(source => fetchRssSource(source)),
+    ...loaders.map(async (load) => {
+      const items = await load()
+      return items.map(item => withBalanceKey(
+        item,
+        item.source === 'Hacker News' ? 'hacker-news' : 'devto'
+      ))
+    })
+  ])
 
   const items = results.flatMap((result) => {
     if (result.status === 'fulfilled') return result.value
@@ -304,7 +213,6 @@ export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
     throw createError({ statusCode: 502, statusMessage: 'Nenhuma fonte de notícias respondeu' })
   }
 
-  // Dedup por URL: preferimos item com subtema e descrição mais rica.
   const byUrl = new Map<string, NewsItem & { balanceKey: string }>()
   for (const item of items) {
     const key = item.url.replace(/\/+$/, '')
@@ -314,7 +222,8 @@ export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
       continue
     }
     const score = (candidate: NewsItem) =>
-      (candidate.topic ? 1000 : 0)
+      (candidate.points + candidate.comments) * 10
+      + (candidate.topic && candidate.topic !== 'geral' ? 1000 : 0)
       + (candidate.description ? 50 : 0)
       + (candidate.sourceIcon === 'i-simple-icons-googlenews' ? -200 : 0)
       + candidate.title.length
@@ -327,21 +236,31 @@ export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
   deduped.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
 
   const balanced = interleaveBySource(deduped, 90)
+  const withTopics = ensureTopicCoverage(balanced, deduped, [
+    'redteam',
+    'blueteam',
+    'purpleteam',
+    'lgpd-grc',
+    'ia',
+    'uiux',
+    'frontend',
+    'backend',
+    'database'
+  ], 90)
+
+  const withEngagement = ensureEngagementCoverage(withTopics, deduped, 90, 14)
+  const translated = await translateNewsItems(withEngagement, lang)
+
   return {
     updatedAt: new Date().toISOString(),
-    items: ensureTopicCoverage(balanced, deduped, [
-      'redteam',
-      'blueteam',
-      'purpleteam',
-      'lgpd-grc',
-      'ia',
-      'uiux',
-      'programacao'
-    ], 90)
+    items: translated
   }
 }, {
   name: 'live-news',
-  getKey: () => 'ptbr-topics-v5',
+  getKey: (event) => {
+    const query = getQuery(event)
+    return `all-regions-translate-${resolveNewsLang(query.lang)}-v14`
+  },
   maxAge: 120,
   swr: false,
   shouldBypassCache: (event) => {
@@ -349,6 +268,43 @@ export default defineCachedEventHandler(async (): Promise<NewsFeed> => {
     return query.fresh === '1' || query.fresh === 'true'
   }
 })
+
+/** Garante posts com curtidas/comentários reais (HN / DEV) no feed final. */
+function ensureEngagementCoverage(
+  feed: NewsItem[],
+  pool: Array<NewsItem & { balanceKey: string }>,
+  maxItems: number,
+  minEngagement: number
+): NewsItem[] {
+  const result = [...feed]
+  const urls = new Set(result.map(item => item.url))
+  const engaged = () => result.filter(item => item.points > 0 || item.comments > 0).length
+
+  if (engaged() >= minEngagement) return result.slice(0, maxItems)
+
+  const extras = pool
+    .filter(item => (item.points > 0 || item.comments > 0) && !urls.has(item.url))
+    .sort((a, b) => (b.points + b.comments) - (a.points + a.comments))
+
+  for (const extra of extras) {
+    if (engaged() >= minEngagement) break
+    const { balanceKey: _, ...item } = extra
+    if (result.length >= maxItems) {
+      const replaceAt = [...result].reverse().findIndex(candidate =>
+        candidate.points === 0 && candidate.comments === 0 && candidate.topic === 'geral'
+      )
+      if (replaceAt === -1) break
+      const index = result.length - 1 - replaceAt
+      urls.delete(result[index]!.url)
+      result[index] = item
+    } else {
+      result.push(item)
+    }
+    urls.add(item.url)
+  }
+
+  return result.slice(0, maxItems)
+}
 
 /** Garante pelo menos alguns itens por subtema, trocando os mais antigos do feed. */
 function ensureTopicCoverage(
@@ -372,7 +328,6 @@ function ensureTopicCoverage(
     for (const extra of extras.slice(0, perTopic - have)) {
       const { balanceKey: _, ...item } = extra
       if (result.length >= maxItems) {
-        // Remove do fim (mais antigo no intercalamento) um item sem o mesmo topic.
         const replaceAt = [...result].reverse().findIndex(candidate => candidate.topic !== topic)
         if (replaceAt === -1) break
         const index = result.length - 1 - replaceAt

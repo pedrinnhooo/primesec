@@ -41,11 +41,24 @@ const channels = computed(() => [
 
 <template>
   <div class="relative overflow-hidden">
-    <GradientGlow class="top-0 left-1/4 w-1/2 h-[28rem] opacity-80" />
+    <!-- Galáxia + attacks (continuidade visual com o globo da Home) -->
     <div
-      class="pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-[radial-gradient(ellipse_at_top,color-mix(in_oklch,var(--ui-primary)_8%,transparent),transparent_60%)]"
-      aria-hidden="true"
-    />
+      class="pointer-events-none absolute inset-x-0 top-0 z-0 h-[min(80vh,44rem)] overflow-hidden"
+      style="-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);"
+    >
+      <LazyGalaxyBanner
+        class="absolute inset-0"
+        palette="green"
+        density="medium"
+        hydrate-on-idle
+      />
+      <GradientGlow class="top-0 left-1/4 w-3/5 h-[55%] opacity-35" />
+      <div
+        class="absolute inset-x-0 top-0 h-full bg-[radial-gradient(ellipse_80%_55%_at_top,color-mix(in_oklch,var(--ui-primary)_4%,transparent)_0%,color-mix(in_oklch,var(--ui-primary)_1.5%,transparent)_40%,transparent_75%)]"
+        aria-hidden="true"
+      />
+      <div class="absolute inset-x-0 bottom-0 h-56 sm:h-72 bg-linear-to-t from-(--ui-bg) from-5% via-(--ui-bg)/70 via-45% to-transparent" />
+    </div>
 
     <UPageSection
       :ui="{
