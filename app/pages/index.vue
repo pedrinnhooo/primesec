@@ -130,15 +130,15 @@ useHead({
       />
     </Transition>
 
-    <!-- Full-bleed cyber threat globe behind hero + header area -->
+    <!-- Full-bleed cyber threat globe + galáxia fluida (sem attacks) -->
     <div
       class="absolute inset-x-0 top-0 z-0 h-[min(100vh,56rem)] overflow-hidden"
-      style="-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);"
+      style="-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);"
     >
-      <!-- Galáxia mono (preto + estrelas) atrás do globo — idle p/ não competir com o WebGL. -->
+      <!-- Galáxia verde fluida atrás do globo — sem linhas de attack (só no CTA/Home). -->
       <LazyGalaxyBanner
-        class="absolute inset-0"
-        palette="mono"
+        class="pointer-events-none absolute inset-0"
+        palette="green"
         density="medium"
         :attacks="false"
         hydrate-on-idle
@@ -167,8 +167,8 @@ useHead({
         @progress="globeProgress = $event"
         @ready="globeReady = true"
       />
-      <GradientGlow class="top-0 w-2/3 h-1/2" />
-      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-64 sm:h-80 bg-linear-to-t from-(--ui-bg) from-5% via-(--ui-bg)/70 via-45% to-transparent" />
+      <GradientGlow class="pointer-events-none top-0 w-2/3 h-1/2 opacity-40" />
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-56 sm:h-72 bg-linear-to-t from-(--ui-bg) from-5% via-(--ui-bg)/70 via-45% to-transparent" />
       <div
         class="primesec-enter absolute left-4 xl:left-8 top-[54%] -translate-y-1/2 hidden xl:block"
         style="--enter-delay: 1.1s"

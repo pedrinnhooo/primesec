@@ -2,8 +2,10 @@
 /**
  * Campo galáctico leve (Canvas 2D).
  *
- * - `green`: névoa verde suave + attacks (Blog/Contato)
- * - `mono`: só espaço preto + estrelas (Home, atrás do globo)
+ * - `green`: névoa verde suave; attacks opcionais (ligado no Blog/Contato)
+ * - `mono`: só espaço preto + estrelas
+ *
+ * Home + CTA usam `green` com `:attacks="false"` (fluido, sem arcos).
  *
  * Otimizado p/ main thread: sem shadowBlur, DPR baixo, ~30fps,
  * pausa fora da viewport / aba oculta (alinhado às práticas Nuxt
