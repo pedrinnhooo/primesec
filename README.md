@@ -32,3 +32,13 @@ pnpm data:countries
 pnpm build
 pnpm preview
 ```
+
+### Formulário de contato (e-mail)
+
+Leads do formulário vão para `priimesec@gmail.com` via [Resend](https://resend.com).
+
+1. Copie `.env.example` → `.env` e preencha `NUXT_RESEND_API_KEY`.
+2. Em produção, verifique o domínio no Resend e defina `NUXT_CONTACT_FROM_EMAIL` (ex.: `PrimeSec <contato@primesec.com.br>`).
+3. Defina `NUXT_CONTACT_HMAC_SECRET` (≥ 16 caracteres).
+
+Sem API key em `pnpm dev`, o POST ainda retorna sucesso e só registra no log.

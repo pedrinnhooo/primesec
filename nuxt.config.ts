@@ -42,7 +42,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Override em produção: NUXT_CONTACT_HMAC_SECRET
-    contactHmacSecret: ''
+    contactHmacSecret: '',
+    // Resend — envio do formulário de contato para priimesec@gmail.com
+    // NUXT_RESEND_API_KEY / NUXT_CONTACT_TO_EMAIL / NUXT_CONTACT_FROM_EMAIL
+    resendApiKey: '',
+    contactToEmail: '',
+    contactFromEmail: ''
   },
 
   content: {
