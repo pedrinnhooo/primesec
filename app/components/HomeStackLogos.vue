@@ -27,12 +27,12 @@ const active = ref<string | null>(null)
 const modalOpen = ref(false)
 const activeTech = ref<TechGuide | null>(null)
 
-/** Empilha em linhas de colmeia: 4 / 4 offset / 4 … → 3 linhas */
+const COLS = 4
+
 function honeycombRows(items: readonly StackLogoItem[]) {
-  const cols = 4
   const rows: StackLogoItem[][] = []
-  for (let i = 0; i < items.length; i += cols) {
-    rows.push([...items.slice(i, i + cols)])
+  for (let i = 0; i < items.length; i += COLS) {
+    rows.push([...items.slice(i, i + COLS)])
   }
   return rows
 }
@@ -126,15 +126,13 @@ function openModal(item: StackLogoItem) {
               >
                 <UIcon
                   :name="item.icon"
-                  class="honeycomb__icon size-7 sm:size-8"
+                  class="honeycomb__icon size-6 sm:size-7"
                 />
+                <span class="honeycomb__label">
+                  {{ item.label }}
+                </span>
               </button>
 
-              <span class="honeycomb__label">
-                {{ item.label }}
-              </span>
-
-              <!-- Tip no hover -->
               <div
                 v-show="active === cellKey(group.id, item.label)"
                 class="honeycomb__tip"
@@ -169,42 +167,52 @@ function openModal(item: StackLogoItem) {
 
 <style scoped>
 .honeycomb {
-  --hex-size: 4.25rem;
-  --hex-gap: 0.95rem;
+  /* Hexágono regular pointy-top, centralizado, com gap entre células */
+  --hex: 4.5rem;
+  --hex-h: calc(var(--hex) * 1.1547);
+  --gap: 0.75rem;
+  --step: calc(var(--hex) + var(--gap));
+  /* Puxa a linha seguinte para o “vale”, sem colar (gap permanece) */
+  --row-pull: calc(var(--hex-h) * 0.25 - var(--gap) * 0.5);
+
   display: flex;
+  width: fit-content;
+  max-width: 100%;
   flex-direction: column;
   align-items: center;
-  gap: 0.45rem;
+  margin-inline: auto;
 }
 
 @media (min-width: 640px) {
   .honeycomb {
-    --hex-size: 4.65rem;
-    --hex-gap: 1.1rem;
+    --hex: 5rem;
+    --gap: 0.9rem;
   }
 }
 
 .honeycomb__row {
   display: flex;
   justify-content: center;
-  gap: var(--hex-gap);
-}
-
-.honeycomb__row--offset {
-  padding-inline: calc((var(--hex-size) + var(--hex-gap)) / 2);
+  gap: var(--gap);
+  /* Compensa o offset da linha ímpar para o bloco ficar no centro */
+  transform: translateX(calc(var(--step) / -4));
 }
 
 .honeycomb__row + .honeycomb__row {
-  margin-top: 0.6rem;
+  margin-top: calc(var(--row-pull) * -1);
+}
+
+.honeycomb__row--offset {
+  /* Desloca meio passo em relação à linha par → colmeia centralizada */
+  transform: translateX(calc(var(--step) / 4));
 }
 
 .honeycomb__cell {
   position: relative;
   z-index: 1;
-  display: flex;
-  width: var(--hex-size);
-  flex-direction: column;
-  align-items: center;
+  width: var(--hex);
+  height: var(--hex-h);
+  flex-shrink: 0;
   transition: opacity 0.35s ease;
 }
 
@@ -219,28 +227,45 @@ function openModal(item: StackLogoItem) {
 .honeycomb__hex {
   position: relative;
   display: flex;
-  width: var(--hex-size);
-  height: calc(var(--hex-size) * 1.08);
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  gap: 0.22rem;
+  padding: 0.35rem 0.45rem 0.55rem;
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
   background:
     linear-gradient(
       160deg,
-      color-mix(in srgb, var(--stack-color) 14%, transparent),
-      color-mix(in oklch, white 4%, transparent)
+      color-mix(in srgb, var(--stack-color) 16%, transparent),
+      color-mix(in oklch, white 5%, transparent)
     );
   transition:
     background 0.3s ease,
     transform 0.3s ease,
-    box-shadow 0.3s ease;
+    filter 0.3s ease;
 }
 
 .honeycomb__hex::before {
   content: '';
   position: absolute;
-  inset: 1px;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  inset: 2px;
+  clip-path: polygon(
+    50% 0%,
+    100% 25%,
+    100% 75%,
+    50% 100%,
+    0% 75%,
+    0% 25%
+  );
   background: #0a0d0a;
   z-index: 0;
   transition: background 0.3s ease;
@@ -258,18 +283,19 @@ function openModal(item: StackLogoItem) {
 }
 
 .honeycomb__label {
-  margin-top: 0.4rem;
-  max-width: 100%;
+  position: relative;
+  z-index: 1;
+  max-width: 90%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 7.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: color-mix(in oklch, var(--ui-text-dimmed) 70%, transparent);
-  opacity: 0.55;
+  color: color-mix(in oklch, var(--ui-text-dimmed) 75%, transparent);
+  opacity: 0.65;
   transition:
     opacity 0.3s ease,
     color 0.3s ease;
@@ -277,7 +303,7 @@ function openModal(item: StackLogoItem) {
 
 .honeycomb__tip {
   position: absolute;
-  bottom: calc(100% + 0.55rem);
+  bottom: calc(100% + 0.25rem);
   left: 50%;
   z-index: 40;
   width: max-content;
@@ -304,11 +330,12 @@ function openModal(item: StackLogoItem) {
 }
 
 .honeycomb__cell--active .honeycomb__hex {
-  transform: translateY(-2px) scale(1.04);
+  z-index: 2;
+  transform: scale(1.06);
   background: linear-gradient(
     160deg,
-    color-mix(in srgb, var(--stack-color) 35%, transparent),
-    color-mix(in srgb, var(--stack-color) 8%, transparent)
+    color-mix(in srgb, var(--stack-color) 38%, transparent),
+    color-mix(in srgb, var(--stack-color) 10%, transparent)
   );
 }
 
@@ -319,7 +346,7 @@ function openModal(item: StackLogoItem) {
 .honeycomb__cell--active .honeycomb__icon {
   color: var(--stack-color);
   filter: grayscale(0) drop-shadow(0 0 8px color-mix(in srgb, var(--stack-color) 50%, transparent));
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
 .honeycomb__cell--active .honeycomb__label {
