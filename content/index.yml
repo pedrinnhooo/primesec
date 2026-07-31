@@ -57,11 +57,30 @@ terminal:
 logos:
   title: Stack e práticas que dominamos
   items:
-    - i-simple-icons-nuxtdotjs
+    - i-simple-icons-nuxt
     - i-simple-icons-vuedotjs
     - i-simple-icons-react
     - i-simple-icons-typescript
-    - i-simple-icons-amazonaws
+    - i-simple-icons-flutter
+    - i-simple-icons-figma
+    - i-simple-icons-tailwindcss
+    - i-simple-icons-vite
+    - i-simple-icons-nodedotjs
+    - i-simple-icons-nestjs
+    - i-simple-icons-python
+    - i-simple-icons-postgresql
+    - i-simple-icons-redis
+    - i-simple-icons-docker
+    - i-simple-icons-kubernetes
+    - i-simple-icons-amazonwebservices
+    - i-simple-icons-linux
+    - i-simple-icons-kalilinux
+    - i-simple-icons-burpsuite
+    - i-simple-icons-metasploit
+    - i-simple-icons-wireshark
+    - i-simple-icons-owasp
+    - i-simple-icons-vault
+    - i-simple-icons-grafana
 features:
   headline: Serviços
   title: "Do código à conformidade."

@@ -260,17 +260,12 @@ useHead({
       </div>
 
       <div
-        class="primesec-enter max-w-2xl mx-auto w-full pointer-events-auto mt-2 sm:mt-4"
+        class="primesec-enter relative z-20 max-w-7xl mx-auto w-full pointer-events-auto mt-2 sm:mt-4 overflow-visible"
         style="--enter-delay: 0.95s"
       >
-        <UPageLogos
+        <HomeStackLogos
           :title="page.logos.title"
-          :items="page.logos.items"
-          :ui="{
-            title: 'font-mono uppercase text-sm tracking-[0.14em] text-dimmed mb-5',
-            logos: 'gap-x-8 gap-y-4',
-            logo: 'text-muted size-9 sm:size-10'
-          }"
+          :groups="page.logos.groups"
         />
       </div>
     </UPageHero>

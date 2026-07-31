@@ -137,7 +137,497 @@
       ]
     },
     "logos": {
-      "title": "Stack e práticas que dominamos"
+      "title": "Stack e práticas que dominamos",
+      "groups": {
+        "frontend": "Frontend & produto",
+        "platform": "Backend & cloud",
+        "security": "Segurança & hacking"
+      },
+      "tech": {
+        "nuxt": "Framework full-stack Vue com SSR, file routing e DX de produção.",
+        "vue": "UI reativa e componentizada para interfaces web modernas.",
+        "react": "Biblioteca para UIs componentizadas e ecossistema maduro.",
+        "typescript": "JavaScript tipado para código mais seguro e manutenível.",
+        "flutter": "Apps multiplataforma nativos a partir de uma base Dart.",
+        "figma": "Design colaborativo de produto, UI e design systems.",
+        "tailwind": "Utility-first CSS para interfaces rápidas e consistentes.",
+        "vite": "Build tool rápida com HMR instantâneo para frontends modernos.",
+        "pinia": "Store oficial do Vue para estado global tipado.",
+        "playwright": "Testes end-to-end confiáveis em múltiplos browsers.",
+        "vitest": "Testes unitários rápidos alinhados ao ecossistema Vite.",
+        "vercel": "Deploy e edge para apps front-end e full-stack.",
+        "nodejs": "Runtime JavaScript no servidor para APIs e serviços.",
+        "nestjs": "Framework Node estruturado, tipado e modular para APIs.",
+        "python": "Linguagem versátil para backend, automação e segurança.",
+        "go": "Linguagem performática para serviços e infraestrutura.",
+        "postgresql": "Banco relacional robusto para dados críticos.",
+        "redis": "Cache e mensageria in-memory de baixa latência.",
+        "mongodb": "Banco documental flexível para dados semi-estruturados.",
+        "prisma": "ORM type-safe para modelar e consultar bancos com DX.",
+        "docker": "Containers para empacotar e rodar apps de forma idêntica.",
+        "kubernetes": "Orquestração de containers em escala.",
+        "terraform": "Infraestrutura como código multi-cloud.",
+        "aws": "Cloud amplamente usada para compute, dados e segurança.",
+        "linux": "Base dos ambientes de servidor, lab e hardening.",
+        "kali": "Distro focada em pentest e auditoria ofensiva.",
+        "burp": "Proxy e toolkit para testes de segurança em apps web.",
+        "metasploit": "Framework de exploração para validar vulnerabilidades.",
+        "wireshark": "Análise profunda de tráfego e protocolos de rede.",
+        "owasp": "Referência de riscos e boas práticas de segurança de apps.",
+        "vault": "Gestão de segredos, chaves e acesso dinâmico.",
+        "grafana": "Observabilidade visual de métricas, logs e traces.",
+        "prometheus": "Coleta e alerta de métricas time-series.",
+        "keycloak": "IAM open-source: SSO, OAuth2 e identidade centralizada.",
+        "cloudflare": "CDN, WAF e proteção de borda contra ameaças.",
+        "openssl": "Criptografia TLS/SSL e utilitários de certificados."
+      },
+      "modal": {
+        "howto": "como funciona",
+        "steps": "fluxo interativo",
+        "about": "em detalhe",
+        "uses": "na primesec",
+        "close": "Fechar",
+        "cta": "Quero usar no projeto",
+        "next": "próximo",
+        "prev": "anterior",
+        "play": "reproduzir",
+        "open": "abrir guia",
+        "clickHint": "clique para o guia interativo"
+      },
+      "guides": {
+        "nuxt": {
+          "about": "Nuxt orquestra Vue com SSR/SSG, rotas por arquivo e convenções que aceleram apps de produção.",
+          "steps": [
+            "Você escreve páginas e componentes Vue na estrutura do projeto.",
+            "O Nuxt resolve rotas, data fetching e renderização (SSR/SPA) automaticamente.",
+            "O build gera um app otimizado pronto para deploy e escala."
+          ],
+          "uses": [
+            "Sites e produtos web com SEO forte",
+            "Painéis e apps full-stack com API routes"
+          ]
+        },
+        "vue": {
+          "about": "Vue compõe a interface em componentes reativos: o estado muda e a UI atualiza com previsibilidade.",
+          "steps": [
+            "Componentes encapsulam template, estado e lógica.",
+            "A reatividade rastreia dependências e re-renderiza só o necessário.",
+            "A árvore de componentes monta a experiência completa do usuário."
+          ],
+          "uses": [
+            "Interfaces web modernas e design systems",
+            "Produtos com UX fluida e manutenção simples"
+          ]
+        },
+        "react": {
+          "about": "React descreve a UI como funções de estado: você declara o que ver, e a lib reconcilia o DOM.",
+          "steps": [
+            "Componentes retornam a estrutura visual a partir de props e state.",
+            "O reconciler calcula o diff mínimo entre renders.",
+            "Hooks e ecossistema cobrem dados, roteamento e formulários."
+          ],
+          "uses": [
+            "SPAs e design systems em larga escala",
+            "Apps com ecossistema maduro de libs"
+          ]
+        },
+        "typescript": {
+          "about": "TypeScript adiciona tipos estáticos ao JavaScript para pegar erros cedo e documentar contratos.",
+          "steps": [
+            "Você tipa funções, APIs e modelos de domínio.",
+            "O compilador valida o código antes de rodar.",
+            "IDE e refactors ficam mais seguros em bases grandes."
+          ],
+          "uses": [
+            "APIs e frontends com contratos claros",
+            "Código compartilhado entre times sem surpresa"
+          ]
+        },
+        "flutter": {
+          "about": "Flutter desenha a UI com widgets e um engine próprio, gerando apps nativos multiplataforma.",
+          "steps": [
+            "A árvore de widgets descreve layouts e interação.",
+            "O engine Skia/Impeller renderiza com performance nativa.",
+            "Um codebase gera iOS, Android e, quando faz sentido, web/desktop."
+          ],
+          "uses": [
+            "Apps mobile com UI consistente",
+            "Produtos que precisam de entrega rápida em duas lojas"
+          ]
+        },
+        "figma": {
+          "about": "Figma é o canvas colaborativo onde produto, design e engenharia alinham a interface.",
+          "steps": [
+            "Designers criam frames, componentes e tokens.",
+            "O time comenta, versiona e valida fluxos juntos.",
+            "Devs exportam specs e implementam o design system."
+          ],
+          "uses": [
+            "Protótipos e handoff para engenharia",
+            "Design systems vivos entre squads"
+          ]
+        },
+        "tailwind": {
+          "about": "Tailwind aplica estilo via utilitários no markup, acelerando UI consistente sem CSS solto.",
+          "steps": [
+            "Classes utilitárias expressam spacing, cor e tipografia.",
+            "O purge remove o que não é usado no build.",
+            "Tokens do tema mantêm a marca alinhada no produto."
+          ],
+          "uses": [
+            "UI rápida com visual consistente",
+            "Design system implementado em código"
+          ]
+        },
+        "vite": {
+          "about": "Vite serve o app com ESM nativo em dev e empacota com Rollup em produção — HMR quase instantâneo.",
+          "steps": [
+            "Em desenvolvimento, módulos sobem sob demanda.",
+            "HMR atualiza só o que mudou, sem reload completo.",
+            "O build de produção gera bundles otimizados."
+          ],
+          "uses": [
+            "DX rápida em Vue/React/Nuxt",
+            "Pipelines de front com feedback imediato"
+          ]
+        },
+        "pinia": {
+          "about": "Pinia é a store oficial do Vue: estado global tipado, actions claras e boa DX.",
+          "steps": [
+            "Você define stores por domínio (auth, carrinho, sessão).",
+            "Componentes leem state e disparam actions.",
+            "Persistência e plugins cobrem casos avançados."
+          ],
+          "uses": [
+            "Estado compartilhado em SPAs Vue",
+            "Sessão e preferências com tipagem"
+          ]
+        },
+        "playwright": {
+          "about": "Playwright automatiza browsers reais para validar fluxos end-to-end com estabilidade.",
+          "steps": [
+            "O teste abre Chromium, Firefox ou WebKit.",
+            "Ações e asserts simulam o usuário real.",
+            "Traces e screenshots ajudam a depurar falhas."
+          ],
+          "uses": [
+            "Regressão de jornadas críticas",
+            "QA automatizado antes do release"
+          ]
+        },
+        "vitest": {
+          "about": "Vitest roda testes unitários no ecossistema Vite: rápido, familiar e alinhado ao bundler.",
+          "steps": [
+            "Você escreve specs perto do código.",
+            "O runner executa em watch com HMR-like feedback.",
+            "Coverage e mocks cobrem a lógica de negócio."
+          ],
+          "uses": [
+            "Testes de componentes e utilitários",
+            "CI rápido no pipeline de front"
+          ]
+        },
+        "vercel": {
+          "about": "Vercel publica frontends e funções edge com preview por PR e CDN global.",
+          "steps": [
+            "O git push dispara build e preview.",
+            "Assets vão para a edge; serverless cobre APIs leves.",
+            "Produção atualiza com rollback simples."
+          ],
+          "uses": [
+            "Deploy contínuo de produtos web",
+            "Previews para review de feature"
+          ]
+        },
+        "nodejs": {
+          "about": "Node.js executa JavaScript no servidor — ideal para APIs, workers e BFF.",
+          "steps": [
+            "O event loop processa I/O sem bloquear.",
+            "Você expõe rotas HTTP ou filas de trabalho.",
+            "Libs e runtime compartilham o mesmo ecossistema JS."
+          ],
+          "uses": [
+            "APIs e microsserviços",
+            "BFF entre front e serviços internos"
+          ]
+        },
+        "nestjs": {
+          "about": "NestJS estrutura APIs Node com módulos, DI e tipagem — padrão enterprise sem perder produtividade.",
+          "steps": [
+            "Módulos isolam domínio (auth, billing, users).",
+            "Controllers recebem HTTP; services concentram regras.",
+            "Guards, pipes e interceptors padronizam segurança e validação."
+          ],
+          "uses": [
+            "APIs REST/GraphQL escaláveis",
+            "Backends tipados com Nest + TypeScript"
+          ]
+        },
+        "python": {
+          "about": "Python brilha em automação, dados e segurança: scripts claros e ecossistema rico.",
+          "steps": [
+            "Você modela a lógica em módulos legíveis.",
+            "Libs cobrem HTTP, parsing, crypto e ML.",
+            "Roda em CLIs, APIs (FastAPI) ou pipelines de análise."
+          ],
+          "uses": [
+            "Automação de pentest e scraping controlado",
+            "APIs e tooling de segurança"
+          ]
+        },
+        "go": {
+          "about": "Go entrega serviços concorrentes e binários simples — ótimo para infra e APIs de baixa latência.",
+          "steps": [
+            "Goroutines lidam com concorrência leve.",
+            "O compilador gera um binário único.",
+            "Deploy fica previsível em containers ou VMs."
+          ],
+          "uses": [
+            "APIs e workers de alta carga",
+            "Ferramentas de rede e segurança"
+          ]
+        },
+        "postgresql": {
+          "about": "PostgreSQL é o banco relacional robusto: ACID, JSON, extensões e performance madura.",
+          "steps": [
+            "Schemas modelam entidades e relações.",
+            "Queries e índices entregam leitura consistente.",
+            "Transações garantem integridade sob carga."
+          ],
+          "uses": [
+            "Fonte da verdade de produtos",
+            "Dados críticos com auditoria"
+          ]
+        },
+        "redis": {
+          "about": "Redis guarda dados em memória para cache, filas e sessões com latência mínima.",
+          "steps": [
+            "A app grava chaves com TTL ou estruturas (list, set).",
+            "Leituras quentes evitam bater no banco principal.",
+            "Pub/Sub e streams cobrem mensageria leve."
+          ],
+          "uses": [
+            "Cache de API e sessões",
+            "Filas e rate limiting"
+          ]
+        },
+        "mongodb": {
+          "about": "MongoDB armazena documentos flexíveis — útil quando o schema evolui rápido.",
+          "steps": [
+            "Documentos JSON/BSON representam entidades.",
+            "Índices aceleram consultas frequentes.",
+            "Agregações processam analytics no próprio banco."
+          ],
+          "uses": [
+            "Catálogos e eventos semi-estruturados",
+            "Produtos com modelo em evolução"
+          ]
+        },
+        "prisma": {
+          "about": "Prisma é um ORM type-safe: o schema gera cliente tipado e migrations previsíveis.",
+          "steps": [
+            "Você declara modelos no schema Prisma.",
+            "Migrations sincronizam o banco.",
+            "O client tipado consulta com autocomplete e segurança."
+          ],
+          "uses": [
+            "Acesso a dados em Node/TS",
+            "Migrations versionadas no time"
+          ]
+        },
+        "docker": {
+          "about": "Docker empacota app + deps em imagens — o mesmo artefato roda em todo ambiente.",
+          "steps": [
+            "O Dockerfile descreve a imagem.",
+            "Build gera camadas cacheáveis.",
+            "Containers sobem isolados em dev, CI e produção."
+          ],
+          "uses": [
+            "Ambientes reproduzíveis",
+            "Base para K8s e CI"
+          ]
+        },
+        "kubernetes": {
+          "about": "Kubernetes orquestra containers: escala, heal e rollout sem intervenção manual constante.",
+          "steps": [
+            "Pods e services declaram a carga desejada.",
+            "O control plane reconcilia o estado real.",
+            "Rollouts e HPA ajustam capacidade sob demanda."
+          ],
+          "uses": [
+            "Produção multi-serviço",
+            "Alta disponibilidade e deploys seguros"
+          ]
+        },
+        "terraform": {
+          "about": "Terraform define infra como código: redes, bancos e permissões versionados no git.",
+          "steps": [
+            "Você declara recursos no HCL.",
+            "Plan mostra o diff antes de aplicar.",
+            "Apply cria/atualiza a cloud de forma repetível."
+          ],
+          "uses": [
+            "Provisionamento multi-cloud",
+            "Ambientes idênticos por stage"
+          ]
+        },
+        "aws": {
+          "about": "AWS oferece compute, dados, rede e segurança sob demanda — a base cloud da maioria dos produtos.",
+          "steps": [
+            "Serviços (EC2, ECS, S3, RDS…) são compostos.",
+            "IAM controla quem acessa o quê.",
+            "Observabilidade e redesign cobrem operação contínua."
+          ],
+          "uses": [
+            "Hospedagem e dados em escala",
+            "Arquiteturas seguras com IAM e VPC"
+          ]
+        },
+        "linux": {
+          "about": "Linux é a base de servidores, containers e labs — hardening e operação começam aqui.",
+          "steps": [
+            "Processos, rede e permissões formam o runtime.",
+            "Você endurece SSH, firewall e pacotes.",
+            "Logs e auditing sustentam resposta a incidentes."
+          ],
+          "uses": [
+            "Servidores e containers",
+            "Labs de pentest e hardening"
+          ]
+        },
+        "kali": {
+          "about": "Kali Linux embute o arsenal ofensivo para pentest ético e auditoria controlada.",
+          "steps": [
+            "O lab sobe com ferramentas pré-instaladas.",
+            "Recon, exploit e pós-exploração seguem metodologia.",
+            "Achados viram evidências e relatório."
+          ],
+          "uses": [
+            "Pentest e Red Team",
+            "Validação de controles de segurança"
+          ]
+        },
+        "burp": {
+          "about": "Burp Suite intercepta e manipula tráfego HTTP para achar falhas em apps web.",
+          "steps": [
+            "O proxy captura requests/responses.",
+            "Repeater e Intruder testam payloads.",
+            "Scanner e extensões ampliam a cobertura."
+          ],
+          "uses": [
+            "Teste de apps e APIs web",
+            "Prova de conceito de vulnerabilidades"
+          ]
+        },
+        "metasploit": {
+          "about": "Metasploit organiza exploits e payloads para validar se uma falha é explorável de verdade.",
+          "steps": [
+            "Você escolhe o módulo adequado ao alvo.",
+            "Payload e sessão medem o impacto.",
+            "O resultado alimenta o relatório de risco."
+          ],
+          "uses": [
+            "Validação ofensiva controlada",
+            "Exercícios de Red Team"
+          ]
+        },
+        "wireshark": {
+          "about": "Wireshark disseca pacotes de rede para entender protocolos, latência e anomalias.",
+          "steps": [
+            "A captura coleta tráfego na interface.",
+            "Filtros isolam conversas e protocolos.",
+            "Análise aponta misconfig, leaks ou ataques."
+          ],
+          "uses": [
+            "Forense de rede e troubleshooting",
+            "Investigação de incidentes"
+          ]
+        },
+        "owasp": {
+          "about": "OWASP é a referência de riscos e boas práticas para segurança de aplicações.",
+          "steps": [
+            "Mapas Top 10 e ASVS orientam o escopo.",
+            "Controles são aplicados no SDLC.",
+            "Retestes medem a redução de risco."
+          ],
+          "uses": [
+            "Baseline de AppSec",
+            "Checklists de desenvolvimento seguro"
+          ]
+        },
+        "vault": {
+          "about": "HashiCorp Vault guarda segredos e emite credenciais dinâmicas com auditoria.",
+          "steps": [
+            "Segredos ficam centralizados e criptografados.",
+            "Políticas definem quem pode ler o quê.",
+            "Credenciais dinâmicas rotacionam automaticamente."
+          ],
+          "uses": [
+            "Gestão de secrets em produção",
+            "Acesso least-privilege a bancos e APIs"
+          ]
+        },
+        "grafana": {
+          "about": "Grafana visualiza métricas, logs e traces para operação e resposta rápida.",
+          "steps": [
+            "Fontes (Prometheus, Loki…) são conectadas.",
+            "Dashboards mostram saúde do sistema.",
+            "Alertas disparam quando o SLO quebra."
+          ],
+          "uses": [
+            "Observabilidade de produtos",
+            "War rooms e on-call"
+          ]
+        },
+        "prometheus": {
+          "about": "Prometheus coleta métricas time-series com pull e regras de alerta.",
+          "steps": [
+            "Exporters expõem métricas dos serviços.",
+            "O server raspa e armazena séries.",
+            "Alertmanager notifica anomalias."
+          ],
+          "uses": [
+            "SLIs/SLOs de infraestrutura",
+            "Detecção precoce de degradação"
+          ]
+        },
+        "keycloak": {
+          "about": "Keycloak centraliza identidade: SSO, OAuth2/OIDC e federação de usuários.",
+          "steps": [
+            "Realms e clients modelam apps e tenants.",
+            "Fluxos OIDC autenticam o usuário.",
+            "Roles e policies autorizam o acesso."
+          ],
+          "uses": [
+            "SSO corporativo",
+            "Auth moderna em produtos e APIs"
+          ]
+        },
+        "cloudflare": {
+          "about": "Cloudflare protege e acelera na borda: CDN, WAF, DDoS e Zero Trust.",
+          "steps": [
+            "O DNS aponta o tráfego para a edge.",
+            "WAF e regras filtram ameaças.",
+            "Cache e Workers melhoram performance."
+          ],
+          "uses": [
+            "Proteção de sites e APIs",
+            "Mitigação de bots e DDoS"
+          ]
+        },
+        "openssl": {
+          "about": "OpenSSL implementa TLS/SSL e utilitários de certificados — a base da criptografia na prática.",
+          "steps": [
+            "Gera chaves e CSRs.",
+            "Negocia handshakes TLS em serviços.",
+            "Valida cadeias e cifra dados em trânsito."
+          ],
+          "uses": [
+            "Certificados e HTTPS",
+            "Hardening de canais criptografados"
+          ]
+        }
+      }
     },
     "features": {
       "headline": "Serviços",
