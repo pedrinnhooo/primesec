@@ -25,7 +25,7 @@
       "description": "PrimeSec unites software development (frontend, mobile, backend and DevOps) with information security (pentest, Red Team, Blue Team, Purple Team, LGPD and GRC)."
     },
     "title": "Technology under control.\nEnd-to-end security.",
-    "description": "PrimeSec operates with two departments — software development and information security — to build, protect, test and keep your business compliant.",
+    "description": "PrimeSec operates with two departments, software development and information security, to build, protect, test and keep your business compliant.",
     "hero": {
       "headline": "Dev and Sec: engineering and security in one partner",
       "links": [
@@ -48,45 +48,90 @@
       "lines": [
         {
           "segments": [
-            { "text": "$ ", "style": "prompt" },
-            { "text": "primesec", "style": "cmd" },
-            { "text": " assess", "style": "flag" }
+            {
+              "text": "$ ",
+              "style": "prompt"
+            },
+            {
+              "text": "primesec",
+              "style": "cmd"
+            },
+            {
+              "text": " assess",
+              "style": "flag"
+            }
           ]
         },
         {
           "segments": [
-            { "text": "→ Mapping stack, threats and compliance...", "style": "dim" }
+            {
+              "text": "→ Mapping stack, threats and compliance...",
+              "style": "dim"
+            }
           ]
         },
         {
           "segments": [
-            { "text": "→ Dept. ", "style": "dim" },
-            { "text": "Dev", "style": "cmd" },
-            { "text": " · Front · Mobile · Back · DevOps", "style": "dim" }
+            {
+              "text": "→ Dept. ",
+              "style": "dim"
+            },
+            {
+              "text": "Dev",
+              "style": "cmd"
+            },
+            {
+              "text": " · Front · Mobile · Back · DevOps",
+              "style": "dim"
+            }
           ]
         },
         {
           "segments": [
-            { "text": "→ Dept. ", "style": "dim" },
-            { "text": "Sec", "style": "cmd" },
-            { "text": " · Pentest · Red/Blue/Purple · LGPD · GRC", "style": "dim" }
+            {
+              "text": "→ Dept. ",
+              "style": "dim"
+            },
+            {
+              "text": "Sec",
+              "style": "cmd"
+            },
+            {
+              "text": " · Pentest · Red/Blue/Purple · LGPD · GRC",
+              "style": "dim"
+            }
           ]
         },
         {
           "segments": [
-            { "text": "→ Technical scope and governance aligned ", "style": "dim" },
-            { "text": "✓", "style": "success" }
+            {
+              "text": "→ Technical scope and governance aligned ",
+              "style": "dim"
+            },
+            {
+              "text": "✓",
+              "style": "success"
+            }
           ]
         },
         {
           "segments": [
-            { "text": " ", "style": "dim" }
+            {
+              "text": " ",
+              "style": "dim"
+            }
           ]
         },
         {
           "segments": [
-            { "text": "✓ [200] ", "style": "success" },
-            { "text": "Welcome to the server ...", "style": "url" }
+            {
+              "text": "✓ [200] ",
+              "style": "success"
+            },
+            {
+              "text": "Welcome to the server ...",
+              "style": "url"
+            }
           ]
         }
       ]
@@ -97,84 +142,407 @@
     "features": {
       "headline": "Services",
       "title": "From code to compliance.",
-      "description": "A full catalog from both departments — software engineering and information security — using the names the market knows.",
+      "description": "A full catalog from both departments, software engineering and information security, using the names the market knows.",
       "items": [
         {
+          "id": "frontend",
           "icon": "i-lucide-panel-top",
           "title": "Frontend Development",
           "description": "Modern, responsive web interfaces with Vue, React and Nuxt. Focus on performance, accessibility, design systems and continuous delivery."
         },
         {
+          "id": "mobile",
           "icon": "i-lucide-smartphone",
           "title": "Mobile Development",
           "description": "Native and cross-platform apps for iOS and Android, with API integration, notifications, auth and a smooth production experience."
         },
         {
+          "id": "backend",
           "icon": "i-lucide-server",
           "title": "Backend and APIs",
           "description": "REST and GraphQL APIs, microservices, authentication, queues and databases. Scalable, observable architecture ready to grow."
         },
         {
+          "id": "devops",
           "icon": "i-lucide-cloud",
           "title": "DevOps and Cloud",
           "description": "CI/CD pipelines, containers, infrastructure as code and cloud environments such as AWS, with monitoring and secure deploys."
         },
         {
+          "id": "architecture",
           "icon": "i-lucide-blocks",
           "title": "Software Architecture",
           "description": "Solution design, legacy modernization and integration patterns, with technical decisions aligned to cost, timeline and security."
         },
         {
+          "id": "uxui",
           "icon": "i-lucide-pen-tool",
           "title": "UX/UI and Digital Product",
-          "description": "Flows, prototypes and interfaces that turn business rules into usable product — from discovery to implementation with engineering."
+          "description": "Flows, prototypes and interfaces that turn business rules into usable product, from discovery to implementation with engineering."
         },
         {
+          "id": "pentest",
           "icon": "i-lucide-bug",
           "title": "Pentest (Penetration Testing)",
           "description": "Controlled vulnerability assessment for web, mobile, APIs and networks (VAPT), with a technical report and remediation guidance."
         },
         {
+          "id": "redteam",
           "icon": "i-lucide-swords",
           "title": "Red Team",
           "description": "Advanced offensive security with real-adversary simulation, testing people, process and technology far beyond a traditional pentest."
         },
         {
+          "id": "blueteam",
           "icon": "i-lucide-shield",
           "title": "Blue Team",
           "description": "Defensive security with hardening, monitoring, detection, incident response and SOC support to reduce threat impact."
         },
         {
+          "id": "purpleteam",
           "icon": "i-lucide-blend",
           "title": "Purple Team",
           "description": "Collaborative attack-and-defense exercises to validate controls and improve detection, based on frameworks such as MITRE ATT&CK."
         },
         {
+          "id": "lgpd",
           "icon": "i-lucide-file-lock-2",
           "title": "LGPD / Privacy Compliance",
           "description": "Privacy and data-protection programs: processing inventories, policies, legal bases, data-subject rights and operational alignment to the law."
         },
         {
+          "id": "grc",
           "icon": "i-lucide-scale",
           "title": "GRC (Governance, Risk and Compliance)",
           "description": "Governance, risk management and compliance with policies, controls, gap analysis and support for standards such as ISO 27001 and NIST."
         }
-      ]
+      ],
+      "modal": {
+        "blueprint": "blueprint",
+        "drawing": "drawing architecture…",
+        "ready": "architecture ready",
+        "highlights": "What we deliver",
+        "cta": "I want this service",
+        "close": "Close",
+        "open": "open"
+      },
+      "details": {
+        "frontend": {
+          "highlights": [
+            "Design system and accessibility",
+            "SSR/SPA with Nuxt, Vue or React",
+            "Core Web Vitals under control"
+          ],
+          "nodes": [
+            "User",
+            "Browser",
+            "CDN",
+            "Web App",
+            "Design System",
+            "API"
+          ],
+          "about": "We build the layer users see and touch: reusable components, routing, state and performance. From design system to continuous delivery, the front becomes a fast, stable product."
+        },
+        "mobile": {
+          "highlights": [
+            "Flutter-first and React Native",
+            "Auth, push and deep links",
+            "Store release and production monitoring"
+          ],
+          "nodes": [
+            "User",
+            "App Store",
+            "Play Store",
+            "App",
+            "Push / Auth",
+            "API"
+          ],
+          "about": "From prototype to store: native and cross-platform apps with Flutter or React Native, API integration, push, auth and continuous publishing on iOS and Android."
+        },
+        "backend": {
+          "highlights": [
+            "Versioned REST and GraphQL",
+            "Queues, cache and the right databases",
+            "Logs, metrics and tracing"
+          ],
+          "nodes": [
+            "Clients",
+            "API Gateway",
+            "Services",
+            "Queues",
+            "Database",
+            "Cache"
+          ],
+          "about": "APIs and services that carry the product: clear contracts, authentication, queues, data and observability. We scale the architecture without losing traceability."
+        },
+        "devops": {
+          "highlights": [
+            "CI/CD with quality gates",
+            "Containers and IaC",
+            "Monitoring and safe deploys"
+          ],
+          "nodes": [
+            "Git",
+            "CI/CD",
+            "Build",
+            "Registry",
+            "Deploy",
+            "Cloud"
+          ],
+          "about": "From commit to cloud: pipelines, containers, infrastructure as code and safe deploys. Less manual ritual, more repeatability and fast rollback."
+        },
+        "architecture": {
+          "highlights": [
+            "Domain map and contracts",
+            "Modernization strategy",
+            "Integration and observability"
+          ],
+          "nodes": [
+            "Legacy",
+            "Adapter",
+            "Core",
+            "Events",
+            "New services",
+            "Obs"
+          ],
+          "about": "We draw the system map: domain boundaries, legacy modernization and integrations. Technical decisions aligned to cost, timeline and security."
+        },
+        "uxui": {
+          "highlights": [
+            "Discovery and prototyping",
+            "Living design system",
+            "Engineering handoff"
+          ],
+          "nodes": [
+            "Research",
+            "Wireframes",
+            "Prototype",
+            "Design System",
+            "Handoff",
+            "Eng"
+          ],
+          "about": "We turn business rules into usable flows: research, wireframes, prototypes and engineering handoff. Interfaces that cut friction and speed delivery."
+        },
+        "pentest": {
+          "highlights": [
+            "Scope and rules of engagement",
+            "Exploitation with evidence",
+            "Report and prioritized fixes"
+          ],
+          "nodes": [
+            "Scope",
+            "Recon",
+            "Exploit",
+            "Validate",
+            "Report",
+            "Fix"
+          ],
+          "about": "Controlled vulnerability assessment across web, mobile, APIs and networks. You get evidence, impact and a clear remediation path."
+        },
+        "redteam": {
+          "highlights": [
+            "Adversary simulation",
+            "Initial access and lateral movement",
+            "Debrief with actionable learning"
+          ],
+          "nodes": [
+            "Adversary",
+            "Access",
+            "People",
+            "Lateral",
+            "Objective",
+            "Debrief"
+          ],
+          "about": "We simulate real adversaries across people, process and technology. Beyond pentest, we measure detection, response and resilience under pressure."
+        },
+        "blueteam": {
+          "highlights": [
+            "Hardening and telemetry",
+            "Detection and incident response",
+            "SOC support and playbooks"
+          ],
+          "nodes": [
+            "Sensors",
+            "Logs",
+            "SIEM",
+            "Detect",
+            "Respond",
+            "Harden"
+          ],
+          "about": "Operational defense: hardening, telemetry, detection and response. We help the SOC see threats early and contain impact with clear playbooks."
+        },
+        "purpleteam": {
+          "highlights": [
+            "Collaborative Red/Blue drills",
+            "MITRE ATT&CK mapping",
+            "Tuning and continuous retest"
+          ],
+          "nodes": [
+            "Red",
+            "Blue",
+            "Attack",
+            "Detect",
+            "Tune",
+            "Retest"
+          ],
+          "about": "Attack and defense in one exercise: we validate controls with ATT&CK, tune detection and retest until the signal is trustworthy."
+        },
+        "lgpd": {
+          "highlights": [
+            "Data and processing map",
+            "Legal bases and policies",
+            "Subject rights and audit"
+          ],
+          "nodes": [
+            "Map",
+            "Legal bases",
+            "Controls",
+            "Rights",
+            "Audit",
+            "Ops"
+          ],
+          "about": "Privacy in practice: processing maps, legal bases, data-subject rights and operational controls aligned to regulation."
+        },
+        "grc": {
+          "highlights": [
+            "Clear policies and roles",
+            "Risk management and controls",
+            "Gap analysis and continuous improvement"
+          ],
+          "nodes": [
+            "Policies",
+            "Risks",
+            "Controls",
+            "Compliance",
+            "Executive",
+            "Improve"
+          ],
+          "about": "Governance, risk and compliance in a continuous loop: policies, controls, gap analysis and support for frameworks like ISO 27001 and NIST."
+        }
+      }
     },
     "metrics": {
       "headline": "How we work",
       "title": "Two departments. One delivery.",
       "description": "Engineering and security specialists in the same flow: from secure build to pentest, from defended operations to documented compliance.",
       "items": [
-        { "value": "2", "label": "Departments", "class": "text-success" },
-        { "value": "12", "label": "Service lines", "class": "text-primary" },
-        { "value": "Sec", "label": "Offense, defense and GRC", "class": "text-info" },
-        { "value": "E2E", "label": "From product to compliance", "class": "text-warning" }
-      ]
+        {
+          "value": "2",
+          "label": "Departments",
+          "class": "text-success"
+        },
+        {
+          "value": "12",
+          "label": "Service lines",
+          "class": "text-primary"
+        },
+        {
+          "value": "Sec",
+          "label": "Offense, defense and GRC",
+          "class": "text-info"
+        },
+        {
+          "value": "E2E",
+          "label": "From product to compliance",
+          "class": "text-warning"
+        }
+      ],
+      "modal": {
+        "theme": "how we work",
+        "drawing": "building the map…",
+        "ready": "map ready",
+        "highlights": "In practice",
+        "cta": "Let's talk",
+        "close": "Close",
+        "open": "open"
+      },
+      "details": {
+        "departments": {
+          "title": "Two departments",
+          "description": "Software engineering and Information Security on the same team.",
+          "about": "PrimeSec brings builders and defenders together. Two departments, one operation: products ship with security in the flow — no cold handoff between squads.",
+          "highlights": [
+            "End-to-end software engineering",
+            "Offensive, defensive and GRC security",
+            "Shared delivery and communication flow",
+            "One scope, no silos between fronts"
+          ],
+          "nodes": [
+            "Engineering",
+            "Software",
+            "Security",
+            "Information",
+            "PrimeSec"
+          ]
+        },
+        "services": {
+          "title": "Twelve service lines",
+          "description": "Full catalog: from frontend to GRC, with market naming.",
+          "about": "Six engineering fronts and six security fronts. Pick the right line — or combine several — and we scope it without reinventing market vocabulary.",
+          "highlights": [
+            "Frontend, mobile, backend and DevOps",
+            "Architecture and product UX/UI",
+            "Pentest, Red, Blue and Purple Team",
+            "Privacy and GRC with operational focus"
+          ],
+          "nodes": [
+            "Frontend",
+            "Mobile",
+            "Backend",
+            "DevOps",
+            "Architecture",
+            "UX/UI",
+            "Pentest",
+            "Red Team",
+            "Blue Team",
+            "Purple",
+            "Privacy",
+            "GRC"
+          ]
+        },
+        "security": {
+          "title": "Information Security",
+          "description": "Offense, defense and governance under one shield.",
+          "about": "Controlled attack to find flaws, defense to detect and respond, GRC to sustain policies and compliance. Three layers that reinforce each other — not three isolated budgets.",
+          "highlights": [
+            "Tailored pentest and Red Team",
+            "Blue and Purple for detection maturity",
+            "Privacy aligned to real operations",
+            "GRC with ISO 27001 and NIST in scope"
+          ],
+          "nodes": [
+            "Offense",
+            "Red · Pentest",
+            "Defense",
+            "Blue · Purple",
+            "GRC",
+            "Governance · Privacy"
+          ]
+        },
+        "e2e": {
+          "title": "From product to compliance",
+          "description": "One continuous delivery: build, protect, operate and prove.",
+          "about": "We don't ship only code or only reports. The flow goes from idea to build, through security, to documented compliance — the same team owns the cycle.",
+          "highlights": [
+            "Product and engineering in one pipeline",
+            "Security baked in before go-live",
+            "Monitored and tested operations",
+            "Compliance evidence without rework"
+          ],
+          "nodes": [
+            "Product",
+            "Build",
+            "Secure",
+            "Operate",
+            "Comply",
+            "CONTINUOUS DELIVERY"
+          ]
+        }
+      }
     },
     "cta": {
       "title": "Shall we structure\nthe next step?",
-      "description": "Tell us your challenge — product, app, API, pentest, Red or Blue Team, privacy or GRC. We'll define the right front and scope with you.",
+      "description": "Tell us your challenge: product, app, API, pentest, Red or Blue Team, privacy or GRC. We'll define the right front and scope with you.",
       "command": "priimesec{'@'}gmail.com",
       "links": [
         {
@@ -193,7 +561,7 @@
     "badge": "Open channel",
     "titlePrimary": "Tell us the challenge.",
     "titleSecondary": "We define the front.",
-    "description": "Development, pentest, Red/Blue/Purple Team, privacy or GRC — one message is enough to start scoping.",
+    "description": "Development, pentest, Red/Blue/Purple Team, privacy or GRC: one message is enough to start scoping.",
     "session": "primesec · contact session",
     "channels": {
       "canal": "channel",
@@ -258,12 +626,13 @@
     "error": "Could not load the feed right now. Check your connection and try again.",
     "retry": "Try again",
     "empty": "No news in this filter right now. Try another topic or refresh the feed.",
-    "sources": "Sources from Brazil, the US and Spain (CISO Advisor, Canaltech, Tecnoblog, TechCrunch, The Verge, The Hacker News, Xataka, Hacker News, DEV Community and Google News). Titles are translated to the site language; links open the original article.",
+    "sources": "Sources from Brazil, the US and Spain (CISO Advisor, Canaltech, Tecnoblog, TechCrunch, The Verge, The Hacker News, Xataka, Hacker News, DEV Community and Google News). Mobile covers Flutter, React Native, iOS and Android. Titles are translated to the site language; links open the original article.",
     "filters": {
       "all": "All",
       "tech": "Technology",
       "cyber": "Cybersecurity",
-      "topicsAll": "All"
+      "topicsAll": "All",
+      "tagsAll": "All tags"
     },
     "cta": {
       "title": "Need help with what you read here?",
@@ -282,10 +651,17 @@
     "frontend": "Frontend",
     "backend": "Backend",
     "database": "Database",
+    "mobile": "Mobile",
     "redteam": "Red Team",
     "blueteam": "Blue Team",
     "purpleteam": "Purple Team",
     "lgpd-grc": "LGPD & GRC"
+  },
+  "tags": {
+    "flutter": "Flutter",
+    "react-native": "React Native",
+    "ios": "iOS",
+    "android": "Android"
   },
   "loader": {
     "messages": [

@@ -11,7 +11,7 @@ import {
   isGoogleNewsSource,
   type RssSourceConfig
 } from '../utils/news-sources'
-import { inferNewsTopic, matchesTopic } from '../utils/news-topics'
+import { inferNewsTags, inferNewsTopic, matchesTopic } from '../utils/news-topics'
 import { translateNewsItems } from '../utils/news-translate'
 import { parseRss } from '../utils/rss'
 
@@ -38,10 +38,13 @@ function itemId(source: string, url: string): string {
 }
 
 function resolveTopic(haystack: string, preferred?: NewsTopic): NewsTopic | undefined {
+  const inferred = inferNewsTopic(haystack)
+  // Mobile (Flutter/RN/iOS/Android) vence preferred genérico (ex.: frontend do feed).
+  if (inferred === 'mobile') return 'mobile'
   if (preferred && preferred !== 'geral' && matchesTopic(haystack, preferred)) {
     return preferred
   }
-  return inferNewsTopic(haystack)
+  return inferred
 }
 
 function resolveCategory(
@@ -96,6 +99,8 @@ async function fetchRssSource(
       ? `${entry.publisher} via ${config.source}`
       : config.source
 
+    const tags = topic === 'mobile' ? inferNewsTags(haystack) : undefined
+
     return [withGeralTopic({
       id: itemId(config.balanceKey, entry.link),
       title: entry.title,
@@ -104,6 +109,7 @@ async function fetchRssSource(
       sourceIcon: config.sourceIcon,
       category,
       topic,
+      ...(tags?.length ? { tags } : {}),
       publishedAt: entry.publishedAt,
       points: 0,
       comments: 0,
@@ -133,6 +139,12 @@ function engagementLoaders(): Array<() => Promise<NewsItem[]>> {
       query: 'database OR postgres OR postgresql OR mysql OR mongodb OR redis OR sql',
       limit: 12
     }),
+    () => fetchHackerNews({
+      category: 'tecnologia',
+      topic: 'mobile',
+      query: 'flutter OR dart OR "react native" OR expo OR android OR ios OR swiftui OR "jetpack compose"',
+      limit: 14
+    }),
     () => fetchDevTo({ tag: 'frontend', category: 'tecnologia', topic: 'frontend', limit: 10 }),
     () => fetchDevTo({ tag: 'react', category: 'tecnologia', topic: 'frontend', limit: 8 }),
     () => fetchDevTo({ tag: 'backend', category: 'tecnologia', topic: 'backend', limit: 10 }),
@@ -140,6 +152,12 @@ function engagementLoaders(): Array<() => Promise<NewsItem[]>> {
     () => fetchDevTo({ tag: 'database', category: 'tecnologia', topic: 'database', limit: 10 }),
     () => fetchDevTo({ tag: 'sql', category: 'tecnologia', topic: 'database', limit: 8 }),
     () => fetchDevTo({ tag: 'postgres', category: 'tecnologia', topic: 'database', limit: 6 }),
+    // Mobile — Flutter em destaque; DEV.to tags públicas (sem API key)
+    () => fetchDevTo({ tag: 'flutter', category: 'tecnologia', topic: 'mobile', limit: 12 }),
+    () => fetchDevTo({ tag: 'dart', category: 'tecnologia', topic: 'mobile', limit: 8 }),
+    () => fetchDevTo({ tag: 'reactnative', category: 'tecnologia', topic: 'mobile', limit: 8 }),
+    () => fetchDevTo({ tag: 'android', category: 'tecnologia', topic: 'mobile', limit: 8 }),
+    () => fetchDevTo({ tag: 'ios', category: 'tecnologia', topic: 'mobile', limit: 8 }),
     () => fetchDevTo({ tag: 'security', category: 'ciberseguranca', topic: 'blueteam', limit: 8 }),
     () => fetchHackerNews({
       category: 'ciberseguranca',
@@ -245,7 +263,8 @@ export default defineCachedEventHandler(async (event): Promise<NewsFeed> => {
     'uiux',
     'frontend',
     'backend',
-    'database'
+    'database',
+    'mobile'
   ], 90)
 
   const withEngagement = ensureEngagementCoverage(withTopics, deduped, 90, 14)
@@ -259,7 +278,7 @@ export default defineCachedEventHandler(async (event): Promise<NewsFeed> => {
   name: 'live-news',
   getKey: (event) => {
     const query = getQuery(event)
-    return `all-regions-translate-${resolveNewsLang(query.lang)}-v14`
+    return `all-regions-translate-${resolveNewsLang(query.lang)}-v15`
   },
   maxAge: 120,
   swr: false,

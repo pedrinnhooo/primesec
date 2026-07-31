@@ -1,5 +1,12 @@
 <script setup lang="ts">
-defineProps<{
+import {
+  METRIC_ICONS,
+  METRIC_IDS,
+  type MetricDetail,
+  type MetricId
+} from '~/utils/metric-themes'
+
+const props = defineProps<{
   headline?: string
   title: string
   description: string
@@ -9,6 +16,48 @@ defineProps<{
     class?: string
   }>
 }>()
+
+const { t, tm, rt } = useI18n()
+
+const open = ref(false)
+const active = ref<MetricDetail | null>(null)
+
+function resolveDetail(id: MetricId, item: (typeof props.items)[number]): MetricDetail {
+  const raw = tm(`home.metrics.details.${id}`) as Record<string, unknown> | undefined
+  const about = raw?.about != null ? String(rt(raw.about as never)) : item.label
+  const title = raw?.title != null ? String(rt(raw.title as never)) : item.label
+  const description = raw?.description != null
+    ? String(rt(raw.description as never))
+    : item.label
+  const highlightsRaw = raw?.highlights
+  const nodesRaw = raw?.nodes
+
+  const highlights = Array.isArray(highlightsRaw)
+    ? highlightsRaw.map(h => String(rt(h as never)))
+    : []
+  const nodes = Array.isArray(nodesRaw)
+    ? nodesRaw.map(n => String(rt(n as never)))
+    : []
+
+  return {
+    id,
+    value: item.value,
+    label: item.label,
+    class: item.class,
+    icon: METRIC_ICONS[id],
+    title,
+    description,
+    about,
+    highlights,
+    nodes
+  }
+}
+
+function openMetric(item: (typeof props.items)[number], index: number) {
+  const id = METRIC_IDS[index] ?? 'departments'
+  active.value = resolveDetail(id, item)
+  open.value = true
+}
 </script>
 
 <template>
@@ -52,7 +101,6 @@ defineProps<{
     </template>
 
     <div class="overflow-hidden rounded-2xl border border-default">
-      <!-- Divisórias via gap-px (altura total da linha). Ghost evita ring por card. -->
       <div class="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
         <ScrollReveal
           v-for="(metric, index) in items"
@@ -61,22 +109,35 @@ defineProps<{
           variant="fade"
           :delay="index * 0.08"
         >
-          <UPageCard
-            :title="metric.value"
-            :description="metric.label"
-            variant="ghost"
-            class="h-full rounded-none bg-default duration-300"
-            to="#"
-            :ui="{
-              root: 'h-full text-center',
-              container: 'h-full justify-center',
-              wrapper: 'h-full items-center justify-center',
-              title: ['text-4xl font-bold tracking-tight leading-none', metric.class],
-              description: 'font-mono text-xs uppercase tracking-[0.06em] text-dimmed mt-3'
-            }"
-          />
+          <button
+            type="button"
+            class="group relative h-full w-full outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset"
+            @click="openMetric(metric, index)"
+          >
+            <UPageCard
+              :title="metric.value"
+              :description="metric.label"
+              variant="ghost"
+              class="h-full rounded-none bg-default duration-300 pointer-events-none group-hover:bg-elevated/50"
+              :ui="{
+                root: 'h-full text-center',
+                container: 'h-full justify-center',
+                wrapper: 'h-full items-center justify-center',
+                title: ['text-4xl font-bold tracking-tight leading-none', metric.class],
+                description: 'font-mono text-xs uppercase tracking-[0.06em] text-dimmed mt-3'
+              }"
+            />
+            <span class="pointer-events-none absolute right-3 top-3 font-mono text-[10px] uppercase tracking-wider text-dimmed opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              {{ t('home.metrics.modal.open') }}
+            </span>
+          </button>
         </ScrollReveal>
       </div>
     </div>
+
+    <MetricModal
+      v-model:open="open"
+      :metric="active"
+    />
   </UPageSection>
 </template>

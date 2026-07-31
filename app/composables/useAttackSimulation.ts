@@ -9,8 +9,8 @@ export function useAttackSimulation() {
     active: 0,
     perMinute: 0,
     totalEvents: 0,
-    topTargetCountry: '—',
-    topSourceCountry: '—',
+    topTargetCountry: '-',
+    topSourceCountry: '-',
     topType: 'malware'
   }))
 }

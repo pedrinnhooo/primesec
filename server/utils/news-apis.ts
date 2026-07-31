@@ -1,5 +1,5 @@
 import type { NewsCategory, NewsItem, NewsTopic } from '#shared/types/news'
-import { inferNewsTopic, matchesTopic } from './news-topics'
+import { inferNewsTags, inferNewsTopic, matchesTopic } from './news-topics'
 
 const FETCH_OPTIONS = {
   timeout: 8_000,
@@ -23,6 +23,13 @@ interface DevToArticle {
   published_at: string
   positive_reactions_count: number
   comments_count: number
+  tag_list?: string[]
+}
+
+function withTags(item: NewsItem, haystack: string): NewsItem {
+  if (item.topic !== 'mobile') return item
+  const tags = inferNewsTags(haystack)
+  return tags.length ? { ...item, tags } : item
 }
 
 /** Hacker News (Algolia) — pontos e comentários reais. */
@@ -40,7 +47,7 @@ export async function fetchHackerNews(options: {
   return hits
     .filter((hit): hit is HNHit & { title: string } => Boolean(hit.title))
     .filter(hit => matchesTopic(hit.title, options.topic))
-    .map(hit => ({
+    .map(hit => withTags({
       id: `hn-${hit.objectID}`,
       title: hit.title,
       url: hit.url || `https://news.ycombinator.com/item?id=${hit.objectID}`,
@@ -51,7 +58,7 @@ export async function fetchHackerNews(options: {
       publishedAt: hit.created_at,
       points: hit.points ?? 0,
       comments: hit.num_comments ?? 0
-    }))
+    }, hit.title))
 }
 
 /** DEV Community — reações e comentários reais. */
@@ -70,12 +77,16 @@ export async function fetchDevTo(options: {
   })
 
   return articles.map((article) => {
-    const haystack = [article.title, article.description || ''].join(' ')
+    const haystack = [
+      article.title,
+      article.description || '',
+      ...(article.tag_list ?? [])
+    ].join(' ')
     const topic = matchesTopic(haystack, options.topic)
       ? options.topic
       : (inferNewsTopic(haystack) ?? options.topic)
 
-    return {
+    return withTags({
       id: `devto-${article.id}`,
       title: article.title,
       url: article.url,
@@ -87,6 +98,6 @@ export async function fetchDevTo(options: {
       points: article.positive_reactions_count ?? 0,
       comments: article.comments_count ?? 0,
       description: article.description
-    }
+    }, haystack)
   })
 }

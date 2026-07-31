@@ -31,7 +31,7 @@ interface HomeContent {
     headline: string
     title: string
     description: string
-    items: Array<{ icon: string, title: string, description: string }>
+    items: Array<{ id?: string, icon: string, title: string, description: string }>
   }
   metrics: {
     headline: string

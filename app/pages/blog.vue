@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NewsCategory, NewsFeed, NewsTopic } from '#shared/types/news'
+import type { NewsCategory, NewsFeed, NewsTag, NewsTopic } from '#shared/types/news'
 import { CONTACT_EMAIL } from '#shared/constants/contact'
 
 definePageMeta({
@@ -43,6 +43,7 @@ watch(newsLang, () => {
   syncedAt.value = null
   activeFilter.value = 'todas'
   activeTopic.value = 'todos'
+  activeTag.value = 'todas'
 })
 
 const toast = useToast()
@@ -184,6 +185,7 @@ const refreshButtonLabel = computed(() => {
 
 type Filter = 'todas' | NewsCategory
 type TopicFilter = 'todos' | NewsTopic
+type TagFilter = 'todas' | NewsTag
 
 const filters = computed(() => [
   { value: 'todas' as const, label: t('blog.filters.all'), icon: 'i-lucide-newspaper' },
@@ -198,7 +200,8 @@ const techTopics = computed(() => [
   { value: 'uiux' as const, label: t('topics.uiux'), icon: 'i-lucide-palette' },
   { value: 'frontend' as const, label: t('topics.frontend'), icon: 'i-lucide-panel-top' },
   { value: 'backend' as const, label: t('topics.backend'), icon: 'i-lucide-server' },
-  { value: 'database' as const, label: t('topics.database'), icon: 'i-lucide-database' }
+  { value: 'database' as const, label: t('topics.database'), icon: 'i-lucide-database' },
+  { value: 'mobile' as const, label: t('topics.mobile'), icon: 'i-lucide-smartphone' }
 ])
 
 const cyberTopics = computed(() => [
@@ -210,8 +213,17 @@ const cyberTopics = computed(() => [
   { value: 'lgpd-grc' as const, label: t('topics.lgpd-grc'), icon: 'i-lucide-scale' }
 ])
 
+const mobileTags = computed(() => [
+  { value: 'todas' as const, label: t('blog.filters.tagsAll'), icon: 'i-lucide-tags' },
+  { value: 'flutter' as const, label: t('tags.flutter'), icon: 'i-simple-icons-flutter' },
+  { value: 'react-native' as const, label: t('tags.react-native'), icon: 'i-simple-icons-react' },
+  { value: 'ios' as const, label: t('tags.ios'), icon: 'i-simple-icons-apple' },
+  { value: 'android' as const, label: t('tags.android'), icon: 'i-simple-icons-android' }
+])
+
 const activeFilter = ref<Filter>('todas')
 const activeTopic = ref<TopicFilter>('todos')
+const activeTag = ref<TagFilter>('todas')
 
 const topicFilters = computed(() => {
   if (activeFilter.value === 'tecnologia') return techTopics.value
@@ -219,8 +231,17 @@ const topicFilters = computed(() => {
   return []
 })
 
+const showMobileTags = computed(() =>
+  activeFilter.value === 'tecnologia' && activeTopic.value === 'mobile'
+)
+
 watch(activeFilter, () => {
   activeTopic.value = 'todos'
+  activeTag.value = 'todas'
+})
+
+watch(activeTopic, () => {
+  activeTag.value = 'todas'
 })
 
 const items = computed(() => {
@@ -229,8 +250,12 @@ const items = computed(() => {
     ? all
     : all.filter(item => item.category === activeFilter.value)
 
-  if (activeTopic.value === 'todos') return byCategory
-  return byCategory.filter(item => item.topic === activeTopic.value)
+  const byTopic = activeTopic.value === 'todos'
+    ? byCategory
+    : byCategory.filter(item => item.topic === activeTopic.value)
+
+  if (!showMobileTags.value || activeTag.value === 'todas') return byTopic
+  return byTopic.filter(item => item.tags?.includes(activeTag.value as NewsTag))
 })
 
 const languageTag = computed(() => {
@@ -364,6 +389,26 @@ const ctaLinks = computed(() => [{
               base: 'justify-center'
             }"
             @click="activeTopic = topic.value"
+          />
+        </div>
+
+        <div
+          v-if="showMobileTags"
+          class="flex flex-wrap items-center justify-center gap-1.5"
+        >
+          <UButton
+            v-for="tag in mobileTags"
+            :key="tag.value"
+            :label="tag.label"
+            :icon="tag.icon"
+            :color="activeTag === tag.value ? 'primary' : 'neutral'"
+            :variant="activeTag === tag.value ? 'soft' : 'ghost'"
+            size="xs"
+            class="rounded-full"
+            :ui="{
+              base: 'justify-center'
+            }"
+            @click="activeTag = tag.value"
           />
         </div>
 

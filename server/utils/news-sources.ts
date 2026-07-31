@@ -219,6 +219,23 @@ function ptRssSources(): RssSourceConfig[] {
       limit: 10
     },
     {
+      // Flutter em destaque + RN / iOS / Android
+      url: googleNewsUrl('(Flutter OR Dart OR "React Native" OR Expo OR Android OR iOS OR SwiftUI OR "Jetpack Compose") (mobile OR app OR desenvolvimento)', 'pt'),
+      ...g,
+      category: 'tecnologia',
+      topic: 'mobile',
+      requireRelevance: 'tech',
+      limit: 12
+    },
+    {
+      url: googleNewsUrl('Flutter (Dart OR framework OR mobile OR app OR Google) (desenvolvimento OR lançamento OR atualização)', 'pt'),
+      ...g,
+      category: 'tecnologia',
+      topic: 'mobile',
+      requireRelevance: 'tech',
+      limit: 10
+    },
+    {
       url: 'https://canaltech.com.br/rss/software/',
       source: 'Canaltech',
       sourceIcon: 'i-lucide-cpu',
@@ -349,6 +366,22 @@ function enRssSources(lang: NewsLang = 'en'): RssSourceConfig[] {
       limit: 10
     },
     {
+      url: googleNewsUrl('(Flutter OR Dart OR "React Native" OR Expo OR Android OR iOS OR SwiftUI OR "Jetpack Compose") (mobile OR app OR development)', lang),
+      ...g,
+      category: 'tecnologia',
+      topic: 'mobile',
+      requireRelevance: 'tech',
+      limit: 12
+    },
+    {
+      url: googleNewsUrl('Flutter (Dart OR framework OR mobile OR app OR Google) (development OR release OR update)', lang),
+      ...g,
+      category: 'tecnologia',
+      topic: 'mobile',
+      requireRelevance: 'tech',
+      limit: 10
+    },
+    {
       url: googleNewsUrl('("artificial intelligence" OR AI OR ChatGPT OR OpenAI OR Anthropic) (tech OR software OR model)', lang),
       ...g,
       category: 'tecnologia',
@@ -450,6 +483,22 @@ function esRssSources(): RssSourceConfig[] {
       ...g,
       category: 'tecnologia',
       topic: 'database',
+      requireRelevance: 'tech',
+      limit: 10
+    },
+    {
+      url: googleNewsUrl('(Flutter OR Dart OR "React Native" OR Expo OR Android OR iOS OR SwiftUI OR "Jetpack Compose") (móvil OR app OR desarrollo)', 'es'),
+      ...g,
+      category: 'tecnologia',
+      topic: 'mobile',
+      requireRelevance: 'tech',
+      limit: 12
+    },
+    {
+      url: googleNewsUrl('Flutter (Dart OR framework OR móvil OR app OR Google) (desarrollo OR lanzamiento OR actualización)', 'es'),
+      ...g,
+      category: 'tecnologia',
+      topic: 'mobile',
       requireRelevance: 'tech',
       limit: 10
     },

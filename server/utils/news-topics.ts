@@ -1,7 +1,12 @@
-import type { NewsTopic } from '#shared/types/news'
+import type { NewsTag, NewsTopic } from '#shared/types/news'
 
 interface TopicRule {
   topic: NewsTopic
+  patterns: RegExp[]
+}
+
+interface TagRule {
+  tag: NewsTag
   patterns: RegExp[]
 }
 
@@ -101,11 +106,35 @@ const TOPIC_RULES: TopicRule[] = [
     ]
   },
   {
+    // Antes de frontend/backend: React Native, Kotlin Android, etc.
+    topic: 'mobile',
+    patterns: [
+      /\bflutter\b/i,
+      /\bdart\s*(lang|language|sdk)?\b/i,
+      /\breact\s*native\b/i,
+      /\bexpo\s*(sdk|router|go)?\b/i,
+      /\bios\s*(app|sdk|dev|development|developer)?\b/i,
+      /\biphone\b/i,
+      /\bipad(os)?\b/i,
+      /\bswift(ui)?\b/i,
+      /\bxcode\b/i,
+      /\bandroid\b/i,
+      /\bjetpack\s*compose\b/i,
+      /\bkotlin\s*multiplatform\b/i,
+      /\bkmp\b/i,
+      /\bmobile\s*(app|apps|dev|development|developer)\b/i,
+      /\bapp\s*nativ[oa]\b/i,
+      /\bcross[\s-]?platform\s*(app|mobile|framework)\b/i,
+      /\bdesenvolvimento\s*mobile\b/i,
+      /\bdesarrollo\s*m[oó]vil\b/i
+    ]
+  },
+  {
     topic: 'frontend',
     patterns: [
       /\bfront[\s-]?end\b/i,
       /\bfrontend\b/i,
-      /\breact(\s*native)?\b/i,
+      /\breact(?!\s*native)\b/i,
       /\bnext\.?js\b/i,
       /\bvue\.?js\b/i,
       /\bnuxt\b/i,
@@ -170,6 +199,46 @@ const TOPIC_RULES: TopicRule[] = [
   }
 ]
 
+/** Ordem: Flutter em destaque, depois RN / iOS / Android. */
+const TAG_RULES: TagRule[] = [
+  {
+    tag: 'flutter',
+    patterns: [
+      /\bflutter\b/i,
+      /\bdart\s*(lang|language|sdk|package|pub\.dev)?\b/i,
+      /\bpub\.dev\b/i
+    ]
+  },
+  {
+    tag: 'react-native',
+    patterns: [
+      /\breact\s*native\b/i,
+      /\bexpo\s*(sdk|router|go|cli)?\b/i
+    ]
+  },
+  {
+    tag: 'ios',
+    patterns: [
+      /\bios\b/i,
+      /\biphone\b/i,
+      /\bipad(os)?\b/i,
+      /\bswift(ui)?\b/i,
+      /\bxcode\b/i,
+      /\bapp\s*store\b/i
+    ]
+  },
+  {
+    tag: 'android',
+    patterns: [
+      /\bandroid\b/i,
+      /\bjetpack\s*compose\b/i,
+      /\bgoogle\s*play\b/i,
+      /\bplay\s*store\b/i,
+      /\bkotlin\s*multiplatform\b/i
+    ]
+  }
+]
+
 /** Infere subtema a partir de título, descrição e categorias do feed. */
 export function inferNewsTopic(
   text: string,
@@ -190,5 +259,21 @@ export function inferNewsTopic(
 export function matchesTopic(text: string, topic: NewsTopic): boolean {
   if (topic === 'geral') return true
   const rule = TOPIC_RULES.find(entry => entry.topic === topic)
+  return rule ? rule.patterns.some(pattern => pattern.test(text)) : false
+}
+
+/** Infere etiquetas Mobile (Flutter, React Native, iOS, Android). */
+export function inferNewsTags(text: string): NewsTag[] {
+  const tags: NewsTag[] = []
+  for (const rule of TAG_RULES) {
+    if (rule.patterns.some(pattern => pattern.test(text))) {
+      tags.push(rule.tag)
+    }
+  }
+  return tags
+}
+
+export function matchesTag(text: string, tag: NewsTag): boolean {
+  const rule = TAG_RULES.find(entry => entry.tag === tag)
   return rule ? rule.patterns.some(pattern => pattern.test(text)) : false
 }

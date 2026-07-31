@@ -8,10 +8,18 @@ export type NewsTopic =
   | 'frontend'
   | 'backend'
   | 'database'
+  | 'mobile'
   | 'redteam'
   | 'blueteam'
   | 'purpleteam'
   | 'lgpd-grc'
+
+/** Etiqueta dentro do subtema Mobile (tecnologia). */
+export type NewsTag =
+  | 'flutter'
+  | 'react-native'
+  | 'ios'
+  | 'android'
 
 export interface NewsItem {
   id: string
@@ -21,6 +29,8 @@ export interface NewsItem {
   sourceIcon: string
   category: NewsCategory
   topic?: NewsTopic
+  /** Etiquetas finas (ex.: Flutter dentro de Mobile). */
+  tags?: NewsTag[]
   publishedAt: string
   points: number
   comments: number

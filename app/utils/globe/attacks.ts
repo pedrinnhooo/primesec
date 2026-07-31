@@ -341,8 +341,8 @@ export class AttackManager {
       active: this.active.length,
       perMinute: Math.round((this.events.length / windowSeconds) * 60),
       totalEvents: this.totalEvents,
-      topTargetCountry: top(targets, '—'),
-      topSourceCountry: top(sources, '—'),
+      topTargetCountry: top(targets, '-'),
+      topSourceCountry: top(sources, '-'),
       topType: top(types, 'malware')
     }
   }

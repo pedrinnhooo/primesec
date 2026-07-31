@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NewsCategory, NewsItem, NewsTopic } from '#shared/types/news'
+import type { NewsCategory, NewsItem, NewsTag, NewsTopic } from '#shared/types/news'
 
 const props = defineProps<{
   item: NewsItem
@@ -21,10 +21,18 @@ const topicClass: Record<NewsTopic, string> = {
   frontend: '!bg-cyan-400/15 !text-cyan-300',
   backend: '!bg-lime-400/15 !text-lime-300',
   database: '!bg-rose-400/15 !text-rose-300',
+  mobile: '!bg-teal-400/15 !text-teal-300',
   redteam: '!bg-red-400/15 !text-red-300',
   blueteam: '!bg-blue-400/15 !text-blue-300',
   purpleteam: '!bg-fuchsia-400/15 !text-fuchsia-300',
   'lgpd-grc': '!bg-orange-400/15 !text-orange-300'
+}
+
+const tagClass: Record<NewsTag, string> = {
+  flutter: '!bg-sky-300/15 !text-sky-200',
+  'react-native': '!bg-cyan-300/15 !text-cyan-200',
+  ios: '!bg-zinc-300/15 !text-zinc-200',
+  android: '!bg-green-400/15 !text-green-300'
 }
 
 const categoryBadge = computed(() => ({
@@ -39,6 +47,15 @@ const topicBadge = computed(() => {
     label: t(`topics.${topic}`),
     class: topicClass[topic]
   }
+})
+
+const tagBadges = computed(() => {
+  const tags = props.item.tags
+  if (!tags?.length) return []
+  return tags.map(tag => ({
+    label: t(`tags.${tag}`),
+    class: tagClass[tag]
+  }))
 })
 
 const relativeTime = computed(() => {
@@ -76,6 +93,16 @@ const relativeTime = computed(() => {
           size="sm"
           class="rounded-full"
           :ui="{ base: topicBadge.class }"
+        />
+        <UBadge
+          v-for="badge in tagBadges"
+          :key="badge.label"
+          :label="badge.label"
+          color="neutral"
+          variant="soft"
+          size="sm"
+          class="rounded-full"
+          :ui="{ base: badge.class }"
         />
       </div>
       <time
