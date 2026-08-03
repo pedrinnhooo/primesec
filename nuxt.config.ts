@@ -9,6 +9,12 @@ export default defineNuxtConfig({
     'nuxt-security'
   ],
 
+  // GitHub Pages + domínio customizado (secfocus.com.br): site na raiz.
+  // Não use '/primesec/' — isso só vale para usuario.github.io/primesec sem domínio próprio.
+  app: {
+    baseURL: '/'
+  },
+
   devtools: {
     enabled: true
   },
@@ -37,7 +43,7 @@ export default defineNuxtConfig({
       redirectOn: 'root',
       fallbackLocale: 'pt'
     },
-    baseUrl: 'https://primesec.com.br'
+    baseUrl: 'https://secfocus.com.br'
   },
 
   runtimeConfig: {

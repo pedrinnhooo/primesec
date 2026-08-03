@@ -28,7 +28,7 @@ const FETCH_OPTIONS = {
   retry: 1,
   responseType: 'text' as const,
   headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; PrimeSecNewsBot/1.0; +https://primesec.com.br)',
+    'User-Agent': 'Mozilla/5.0 (compatible; PrimeSecNewsBot/1.0; +https://secfocus.com.br)',
     Accept: 'application/rss+xml, application/xml, text/xml, */*'
   }
 }
