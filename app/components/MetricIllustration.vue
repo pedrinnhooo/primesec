@@ -211,7 +211,7 @@ function label(index: number, fallback: string) {
             font-size="14"
             letter-spacing="0.12em"
           >
-            {{ label(4, 'PrimeSec') }}
+            {{ label(4, 'SecFocus') }}
           </text>
         </g>
       </g>

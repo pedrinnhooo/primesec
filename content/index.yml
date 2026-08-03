@@ -1,8 +1,8 @@
 seo:
-  title: "PrimeSec: Desenvolvimento e Segurança da Informação"
-  description: "A PrimeSec une desenvolvimento de software (frontend, mobile, backend e DevOps) e segurança da informação (pentest, Red Team, Blue Team, Purple Team, LGPD e GRC)."
+  title: "SecFocus: Desenvolvimento e Segurança da Informação"
+  description: "A SecFocus une desenvolvimento de software (frontend, mobile, backend e DevOps) e segurança da informação (pentest, Red Team, Blue Team, Purple Team, LGPD e GRC)."
 title: "Tecnologia sob controle.\nSegurança de ponta a ponta."
-description: "A PrimeSec atua com dois departamentos, desenvolvimento de software e segurança da informação, para construir, proteger, testar e manter a conformidade do seu negócio."
+description: "A SecFocus atua com dois departamentos, desenvolvimento de software e segurança da informação, para construir, proteger, testar e manter a conformidade do seu negócio."
 hero:
   headline: "Dev e SI: engenharia e segurança no mesmo parceiro"
   links:
@@ -20,7 +20,7 @@ terminal:
     - segments:
         - text: "$ "
           style: prompt
-        - text: "primesec"
+        - text: "secfocus"
           style: cmd
         - text: " assess"
           style: flag
@@ -142,7 +142,7 @@ metrics:
 cta:
   title: "Vamos estruturar\no próximo passo?"
   description: "Conte o seu desafio, seja produto, app, API, pentest, Red ou Blue Team, LGPD ou GRC. A gente define a frente certa e o escopo com você."
-  command: priimesec@gmail.com
+  command: contato@secfocus.com.br
   links:
     - label: Falar conosco
       color: primary

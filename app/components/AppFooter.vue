@@ -26,7 +26,7 @@ const links = computed(() => [
       <NuxtLink
         :to="localePath('index')"
         class="primesec-brand-link w-fit"
-        aria-label="PrimeSec"
+        aria-label="SecFocus"
       >
         <AppBrand size="sm" />
       </NuxtLink>

@@ -5,6 +5,7 @@
     "blog": "Blog",
     "contact": "Contact",
     "openMenu": "Open menu",
+    "closeMenu": "Close menu",
     "primary": "Primary navigation"
   },
   "locale": {
@@ -21,11 +22,11 @@
   },
   "home": {
     "seo": {
-      "title": "PrimeSec: Software Development and Information Security",
-      "description": "PrimeSec unites software development (frontend, mobile, backend and DevOps) with information security (pentest, Red Team, Blue Team, Purple Team, LGPD and GRC)."
+      "title": "SecFocus: Software Development and Information Security",
+      "description": "SecFocus unites software development (frontend, mobile, backend and DevOps) with information security (pentest, Red Team, Blue Team, Purple Team, LGPD and GRC)."
     },
     "title": "Technology under control.\nEnd-to-end security.",
-    "description": "PrimeSec operates with two departments, software development and information security, to build, protect, test and keep your business compliant.",
+    "description": "SecFocus operates with two departments, software development and information security, to build, protect, test and keep your business compliant.",
     "hero": {
       "headline": "Dev and Sec: engineering and security in one partner",
       "links": [
@@ -53,7 +54,7 @@
               "style": "prompt"
             },
             {
-              "text": "primesec",
+              "text": "secfocus",
               "style": "cmd"
             },
             {
@@ -185,7 +186,7 @@
         "howto": "how it works",
         "steps": "interactive flow",
         "about": "in detail",
-        "uses": "at primesec",
+        "uses": "at secfocus",
         "close": "Close",
         "cta": "I want this on my project",
         "next": "next",
@@ -950,7 +951,7 @@
         "departments": {
           "title": "Two departments",
           "description": "Software engineering and Information Security on the same team.",
-          "about": "PrimeSec brings builders and defenders together. Two departments, one operation: products ship with security in the flow — no cold handoff between squads.",
+          "about": "SecFocus brings builders and defenders together. Two departments, one operation: products ship with security in the flow — no cold handoff between squads.",
           "highlights": [
             "End-to-end software engineering",
             "Offensive, defensive and GRC security",
@@ -962,7 +963,7 @@
             "Software",
             "Security",
             "Information",
-            "PrimeSec"
+            "SecFocus"
           ]
         },
         "services": {
@@ -1033,7 +1034,7 @@
     "cta": {
       "title": "Shall we structure\nthe next step?",
       "description": "Tell us your challenge: product, app, API, pentest, Red or Blue Team, privacy or GRC. We'll define the right front and scope with you.",
-      "command": "priimesec{'@'}gmail.com",
+      "command": "contato{'@'}secfocus.com.br",
       "links": [
         {
           "label": "Talk to us",
@@ -1045,14 +1046,14 @@
   },
   "contact": {
     "seo": {
-      "title": "Contact: talk to PrimeSec",
-      "description": "Share your software development or information security challenge. PrimeSec replies within 1 business day."
+      "title": "Contact: talk to SecFocus",
+      "description": "Share your software development or information security challenge. SecFocus replies within 1 business day."
     },
     "badge": "Open channel",
     "titlePrimary": "Tell us the challenge.",
     "titleSecondary": "We define the front.",
     "description": "Development, pentest, Red/Blue/Purple Team, privacy or GRC: one message is enough to start scoping.",
-    "session": "primesec · contact session",
+    "session": "secfocus · contact session",
     "channels": {
       "canal": "channel",
       "sla": "sla",
@@ -1092,8 +1093,8 @@
     },
     "toast": {
       "failTitle": "Could not send",
-      "failChallenge": "Reload the page and try again, or write to priimesec{'@'}gmail.com.",
-      "failRetry": "Try again or write directly to priimesec{'@'}gmail.com.",
+      "failChallenge": "Reload the page and try again, or write to contato{'@'}secfocus.com.br.",
+      "failRetry": "Try again or write directly to contato{'@'}secfocus.com.br.",
       "successTitle": "Message sent!",
       "successDescription": "We received your contact and will reply within 1 business day."
     }
@@ -1101,7 +1102,7 @@
   "blog": {
     "seo": {
       "title": "Blog: Technology and cybersecurity news",
-      "description": "PrimeSec's live radar: technology and cybersecurity news in Portuguese, aggregated from Brazilian sources such as CISO Advisor, Canaltech, Tecnoblog and CERT.br."
+      "description": "SecFocus's live radar: technology and cybersecurity news in Portuguese, aggregated from Brazilian sources such as CISO Advisor, Canaltech, Tecnoblog and CERT.br."
     },
     "badge": "Live feed · updates every 2 min",
     "titlePrimary": "Technology radar",

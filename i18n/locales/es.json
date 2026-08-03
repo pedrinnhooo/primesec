@@ -5,6 +5,7 @@
     "blog": "Blog",
     "contact": "Contacto",
     "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
     "primary": "Navegación principal"
   },
   "locale": {
@@ -21,11 +22,11 @@
   },
   "home": {
     "seo": {
-      "title": "PrimeSec: Desarrollo de software y seguridad de la información",
-      "description": "PrimeSec une desarrollo de software (frontend, mobile, backend y DevOps) con seguridad de la información (pentest, Red Team, Blue Team, Purple Team, LGPD y GRC)."
+      "title": "SecFocus: Desarrollo de software y seguridad de la información",
+      "description": "SecFocus une desarrollo de software (frontend, mobile, backend y DevOps) con seguridad de la información (pentest, Red Team, Blue Team, Purple Team, LGPD y GRC)."
     },
     "title": "Tecnología bajo control.\nSeguridad de punta a punta.",
-    "description": "PrimeSec opera con dos departamentos, desarrollo de software y seguridad de la información, para construir, proteger, probar y mantener la conformidad de tu negocio.",
+    "description": "SecFocus opera con dos departamentos, desarrollo de software y seguridad de la información, para construir, proteger, probar y mantener la conformidad de tu negocio.",
     "hero": {
       "headline": "Dev y SI: ingeniería y seguridad en el mismo partner",
       "links": [
@@ -53,7 +54,7 @@
               "style": "prompt"
             },
             {
-              "text": "primesec",
+              "text": "secfocus",
               "style": "cmd"
             },
             {
@@ -185,7 +186,7 @@
         "howto": "cómo funciona",
         "steps": "flujo interactivo",
         "about": "en detalle",
-        "uses": "en primesec",
+        "uses": "en secfocus",
         "close": "Cerrar",
         "cta": "Quiero usarlo en el proyecto",
         "next": "siguiente",
@@ -950,7 +951,7 @@
         "departments": {
           "title": "Dos departamentos",
           "description": "Ingeniería de software y Seguridad de la Información en el mismo equipo.",
-          "about": "PrimeSec une a quienes construyen y a quienes protegen. Dos departamentos, una operación: el producto nace con seguridad en el flujo, sin handoff frío entre squads.",
+          "about": "SecFocus une a quienes construyen y a quienes protegen. Dos departamentos, una operación: el producto nace con seguridad en el flujo, sin handoff frío entre squads.",
           "highlights": [
             "Ingeniería de software de punta a punta",
             "Seguridad ofensiva, defensiva y GRC",
@@ -962,7 +963,7 @@
             "Software",
             "Seguridad",
             "de la Información",
-            "PrimeSec"
+            "SecFocus"
           ]
         },
         "services": {
@@ -1033,7 +1034,7 @@
     "cta": {
       "title": "¿Estructuramos\nel próximo paso?",
       "description": "Cuéntanos tu desafío: producto, app, API, pentest, Red o Blue Team, LGPD o GRC. Definimos el frente correcto y el alcance contigo.",
-      "command": "priimesec{'@'}gmail.com",
+      "command": "contato{'@'}secfocus.com.br",
       "links": [
         {
           "label": "Hablar con nosotros",
@@ -1045,14 +1046,14 @@
   },
   "contact": {
     "seo": {
-      "title": "Contacto: habla con PrimeSec",
-      "description": "Cuéntanos tu desafío de desarrollo de software o seguridad de la información. PrimeSec responde en hasta 1 día hábil."
+      "title": "Contacto: habla con SecFocus",
+      "description": "Cuéntanos tu desafío de desarrollo de software o seguridad de la información. SecFocus responde en hasta 1 día hábil."
     },
     "badge": "Canal abierto",
     "titlePrimary": "Cuéntanos el desafío.",
     "titleSecondary": "Definimos el frente.",
     "description": "Desarrollo, pentest, Red/Blue/Purple Team, LGPD o GRC: un mensaje basta para empezar el alcance.",
-    "session": "primesec · contact session",
+    "session": "secfocus · contact session",
     "channels": {
       "canal": "canal",
       "sla": "sla",
@@ -1092,8 +1093,8 @@
     },
     "toast": {
       "failTitle": "No se pudo enviar",
-      "failChallenge": "Recarga la página e inténtalo de nuevo, o escribe a priimesec{'@'}gmail.com.",
-      "failRetry": "Inténtalo de nuevo o escribe directo a priimesec{'@'}gmail.com.",
+      "failChallenge": "Recarga la página e inténtalo de nuevo, o escribe a contato{'@'}secfocus.com.br.",
+      "failRetry": "Inténtalo de nuevo o escribe directo a contato{'@'}secfocus.com.br.",
       "successTitle": "¡Mensaje enviado!",
       "successDescription": "Recibimos tu contacto y respondemos en hasta 1 día hábil."
     }
@@ -1101,7 +1102,7 @@
   "blog": {
     "seo": {
       "title": "Blog: Noticias de tecnología y ciberseguridad",
-      "description": "Radar en tiempo real de PrimeSec: noticias de tecnología y ciberseguridad en portugués, agregadas de fuentes brasileñas como CISO Advisor, Canaltech, Tecnoblog y CERT.br."
+      "description": "Radar en tiempo real de SecFocus: noticias de tecnología y ciberseguridad en portugués, agregadas de fuentes brasileñas como CISO Advisor, Canaltech, Tecnoblog y CERT.br."
     },
     "badge": "Feed en vivo · actualiza cada 2 min",
     "titlePrimary": "Radar de tecnología",

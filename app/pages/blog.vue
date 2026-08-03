@@ -326,7 +326,7 @@ const ctaLinks = computed(() => [{
         </div>
 
         <h1
-          class="primesec-enter mt-6 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] text-highlighted"
+          class="primesec-enter mt-6 text-5xl sm:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.05] text-highlighted"
           style="--enter-delay: 0.25s"
         >
           {{ t('blog.titlePrimary') }}
@@ -343,7 +343,7 @@ const ctaLinks = computed(() => [{
         </h1>
 
         <p
-          class="primesec-enter mt-5 max-w-xl text-base sm:text-lg leading-relaxed text-dimmed"
+          class="primesec-enter mt-5 max-w-xl text-lg sm:text-lg leading-relaxed text-dimmed"
           style="--enter-delay: 0.4s"
         >
           {{ t('blog.description') }}

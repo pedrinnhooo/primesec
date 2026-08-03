@@ -184,7 +184,7 @@ useHead({
         container: 'relative z-10 lg:py-20',
         wrapper: 'flex flex-col items-center',
         title: 'sm:text-6xl lg:text-7xl xl:text-[80px] tracking-tighter leading-[1.05]',
-        description: 'mt-5 max-w-xl mx-auto text-base sm:text-lg leading-relaxed text-default',
+        description: 'mt-5 max-w-xl mx-auto text-lg sm:text-lg leading-relaxed text-default',
         links: 'gap-3'
       }"
     >

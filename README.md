@@ -1,6 +1,6 @@
-# PrimeSec
+# SecFocus
 
-Landing page da PrimeSec: consultoria de tecnologia com desenvolvimento e segurança da informação.
+Landing page da SecFocus: consultoria de tecnologia com desenvolvimento e segurança da informação.
 
 ## Stack
 

@@ -29,14 +29,14 @@ useHead(() => ({
     dir: i18nHead.value.htmlAttrs?.dir || 'ltr'
   },
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} · PrimeSec` : 'PrimeSec'
+    return titleChunk ? `${titleChunk} · SecFocus` : 'SecFocus'
   }
 }))
 
 useSeoMeta({
   twitterCard: 'summary_large_image',
   ogType: 'website',
-  ogSiteName: 'PrimeSec'
+  ogSiteName: 'SecFocus'
 })
 </script>
 

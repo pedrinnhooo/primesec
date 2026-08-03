@@ -12,7 +12,7 @@ function resolveSecret(): string {
   }
   // Fallback só para dev/preview — em produção defina NUXT_CONTACT_HMAC_SECRET.
   if (import.meta.dev) {
-    return 'primesec-dev-contact-hmac-secret'
+    return 'secfocus-dev-contact-hmac-secret'
   }
   throw createError({
     statusCode: 500,

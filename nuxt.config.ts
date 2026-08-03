@@ -6,11 +6,11 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    'nuxt-security'
+    'nuxt-security',
+    '@vercel/analytics'
   ],
 
-  // GitHub Pages + domínio customizado (secfocus.com.br): site na raiz.
-  // Não use '/primesec/' — isso só vale para usuario.github.io/primesec sem domínio próprio.
+  // Domínio de produção (Vercel + GoDaddy).
   app: {
     baseURL: '/'
   },

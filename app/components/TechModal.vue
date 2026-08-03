@@ -103,7 +103,7 @@ function close() {
         </div>
         <div class="min-w-0">
           <p class="font-mono text-[10px] uppercase tracking-[0.16em] text-primary/80">
-            primesec · {{ t('home.logos.modal.howto') }} / {{ tech.id }}
+            secfocus · {{ t('home.logos.modal.howto') }} / {{ tech.id }}
           </p>
           <h2 class="mt-1.5 text-lg font-semibold tracking-tight text-highlighted sm:text-xl">
             {{ tech.label }}

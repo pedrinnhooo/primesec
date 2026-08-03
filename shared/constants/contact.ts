@@ -10,4 +10,4 @@ export const CONTACT_SUBJECTS = [
 
 export type ContactSubject = (typeof CONTACT_SUBJECTS)[number]
 
-export const CONTACT_EMAIL = 'priimesec@gmail.com'
+export const CONTACT_EMAIL = 'contato@secfocus.com.br'

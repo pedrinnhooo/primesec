@@ -91,7 +91,7 @@ useHead({
   },
   script: [
     {
-      key: 'primesec-loader-count',
+      key: 'secfocus-loader-count',
       src: '/loader-count.js',
       // Fetch cedo; executa após o parse (loader já está no DOM).
       defer: true,
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
 
     <div class="flex flex-col items-center gap-4 px-6">
       <p class="font-mono text-[11px] uppercase tracking-[0.38em] text-primary">
-        PrimeSec
+        SecFocus
       </p>
 
       <div class="h-7 overflow-hidden">

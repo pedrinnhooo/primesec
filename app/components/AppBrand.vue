@@ -15,6 +15,6 @@ withDefaults(defineProps<{
     <span
       class="primesec-brand__name"
       aria-hidden="true"
-    >PrimeSec</span>
+    >SecFocus</span>
   </span>
 </template>

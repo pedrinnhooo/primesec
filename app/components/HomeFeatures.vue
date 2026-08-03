@@ -113,8 +113,8 @@ function openService(item: (typeof props.items)[number], index: number) {
               class="rounded-none h-full duration-300 pointer-events-none group-hover:bg-elevated/50"
               :ui="{
                 leading: 'mb-5 flex size-9 justify-center rounded-lg bg-primary/10',
-                title: 'text-sm tracking-tight',
-                description: 'text-sm leading-relaxed sm:line-clamp-2 lg:line-clamp-3 text-dimmed'
+                title: 'text-base tracking-tight sm:text-sm',
+                description: 'text-base leading-relaxed sm:text-sm sm:line-clamp-2 lg:line-clamp-3 text-dimmed'
               }"
             />
             <span class="pointer-events-none absolute right-4 top-4 font-mono text-[10px] uppercase tracking-wider text-dimmed opacity-0 transition-opacity duration-300 group-hover:opacity-100">
