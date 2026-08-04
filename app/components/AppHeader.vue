@@ -80,7 +80,17 @@ nuxtApp.hooks.hookOnce('page:loading:end', () => {
 
 <template>
   <header class="pointer-events-none fixed inset-x-0 top-0 z-50">
-    <div class="pointer-events-auto mt-3 mx-3 w-[calc(100%-1.5rem)] sm:mt-4 sm:ml-10 sm:mr-6 sm:w-[calc(100%-4rem)] xl:ml-24 xl:mr-16 xl:w-[calc(100%-10rem)]">
+    <Transition name="primesec-mobile-overlay">
+      <button
+        v-if="mobileOpen"
+        type="button"
+        class="primesec-mobile-overlay pointer-events-auto md:hidden"
+        :aria-label="t('nav.closeMenu')"
+        @click="closeMenu"
+      />
+    </Transition>
+
+    <div class="pointer-events-auto relative z-10 mt-3 mx-3 w-[calc(100%-1.5rem)] sm:mt-4 sm:ml-10 sm:mr-6 sm:w-[calc(100%-4rem)] xl:ml-24 xl:mr-16 xl:w-[calc(100%-10rem)]">
       <div
         ref="bar"
         class="relative"

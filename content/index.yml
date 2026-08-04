@@ -6,7 +6,7 @@ description: "A SecFocus atua com dois departamentos, desenvolvimento de softwar
 hero:
   headline: "Dev e SI: engenharia e segurança no mesmo parceiro"
   links:
-    - label: Falar conosco
+    - label: Fale conosco
       color: primary
       size: xl
       to: '/contato'
@@ -144,6 +144,6 @@ cta:
   description: "Conte o seu desafio, seja produto, app, API, pentest, Red ou Blue Team, LGPD ou GRC. A gente define a frente certa e o escopo com você."
   command: contato@secfocus.com.br
   links:
-    - label: Falar conosco
+    - label: Fale conosco
       color: primary
       to: '/contato'

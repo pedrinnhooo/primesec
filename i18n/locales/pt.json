@@ -31,7 +31,7 @@
       "headline": "Dev e SI: engenharia e segurança no mesmo parceiro",
       "links": [
         {
-          "label": "Falar conosco",
+          "label": "Fale conosco",
           "color": "primary",
           "size": "xl",
           "route": "contato"
@@ -1037,7 +1037,7 @@
       "command": "contato{'@'}secfocus.com.br",
       "links": [
         {
-          "label": "Falar conosco",
+          "label": "Fale conosco",
           "color": "primary",
           "route": "contato"
         }
@@ -1128,7 +1128,7 @@
     "cta": {
       "title": "Precisa de ajuda com o que leu por aqui?",
       "description": "Da correção de uma vulnerabilidade ao próximo produto: nossos times de desenvolvimento e segurança podem ajudar.",
-      "link": "Falar conosco"
+      "link": "Fale conosco"
     }
   },
   "categories": {

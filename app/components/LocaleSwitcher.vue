@@ -36,19 +36,40 @@ function placeMenu() {
   const el = button.value
   if (!el) return
   const rect = el.getBoundingClientRect()
-  const gap = 18
+  const gap = 12
+  const pad = 12
+  const menuWidth = menu.value?.offsetWidth || 200
+  const menuHeight = menu.value?.offsetHeight || 160
+
+  // Alinha pela esquerda do botão quando há espaço; senão pela direita; senão clamp.
+  let left = Math.round(rect.left)
+  if (left + menuWidth + pad > window.innerWidth) {
+    left = Math.round(rect.right - menuWidth)
+  }
+  left = Math.max(pad, Math.min(left, window.innerWidth - menuWidth - pad))
+
+  let top = Math.round(rect.bottom + gap)
+  if (top + menuHeight + pad > window.innerHeight) {
+    top = Math.round(rect.top - menuHeight - gap)
+  }
+  top = Math.max(pad, Math.min(top, window.innerHeight - menuHeight - pad))
+
   menuStyle.value = {
     position: 'fixed',
-    top: `${Math.round(rect.bottom + gap)}px`,
-    right: `${Math.round(window.innerWidth - rect.right)}px`,
-    left: 'auto'
+    top: `${top}px`,
+    left: `${left}px`,
+    right: 'auto'
   }
 }
 
 function toggle() {
   open.value = !open.value
   if (open.value) {
-    nextTick(placeMenu)
+    nextTick(() => {
+      placeMenu()
+      // Remede após paint — Teleport/Transition podem atrasar o offsetWidth.
+      requestAnimationFrame(placeMenu)
+    })
   }
 }
 
