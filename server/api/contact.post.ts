@@ -1,4 +1,5 @@
 import { contactBodySchema } from '#shared/schemas/contact'
+import { emailFingerprint, sendContactMail } from '../utils/mail'
 
 export default defineEventHandler(async (event) => {
   assertSameOrigin(event)
@@ -31,16 +32,12 @@ export default defineEventHandler(async (event) => {
 
   const { name, email, company, subject, message } = parsed.data
 
-  // TODO: integrar com um provedor de e-mail (Resend, SES, Postmark) ou CRM.
-  // Por enquanto o lead fica registrado no log do servidor.
-  console.info('[contact] Novo lead recebido:', JSON.stringify({
-    name,
-    email,
-    company: company || undefined,
+  await sendContactMail({ name, email, company, subject, message })
+
+  console.info('[contact] Lead enviado', {
     subject,
-    message,
-    receivedAt: new Date().toISOString()
-  }))
+    emailFp: emailFingerprint(email)
+  })
 
   return { ok: true }
 })

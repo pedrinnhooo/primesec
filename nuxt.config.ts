@@ -48,7 +48,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Override em produção: NUXT_CONTACT_HMAC_SECRET
-    contactHmacSecret: ''
+    contactHmacSecret: '',
+    // Resend — formulário → contato@secfocus.com.br
+    // NUXT_RESEND_API_KEY / NUXT_CONTACT_TO_EMAIL / NUXT_CONTACT_FROM_EMAIL
+    resendApiKey: '',
+    contactToEmail: '',
+    contactFromEmail: ''
   },
 
   content: {
