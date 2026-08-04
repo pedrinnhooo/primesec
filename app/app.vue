@@ -18,6 +18,15 @@ useHead(() => ({
     { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
     ...(i18nHead.value.link || [])
   ],
+  script: [
+    {
+      // Roda antes da pintura: cookie da intro → marca html e libera scroll
+      // (o loader pré-renderizado some via CSS, sem “trava e solta”).
+      key: 'secfocus-intro-gate',
+      innerHTML: '(function(){try{if(/(?:^|;\\s)secfocus-intro=true(?:;|$)/.test(document.cookie)){var h=document.documentElement;h.classList.add("secfocus-intro-seen");h.classList.remove("overflow-hidden","secfocus-scroll-lock")}}catch(e){}})();',
+      tagPosition: 'head'
+    }
+  ],
   // Sem JS nada dispara o reveal nem esconde a tela de carregamento.
   noscript: [
     {

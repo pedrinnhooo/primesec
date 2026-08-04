@@ -1,10 +1,21 @@
 /**
  * Contagem 0% → N% antes da hidratação do Vue / parse do Three.js.
  * O GlobeLoader assume o valor em window.__primesecLoaderPercent ao montar.
+ * Se a intro já foi vista (cookie), não inicia a contagem.
  */
 (function () {
   if (typeof window === 'undefined') return
   if (window.__primesecLoaderTakeover) return
+
+  try {
+    if (/(?:^|;\s)secfocus-intro=true(?:;|$)/.test(document.cookie)
+      || document.documentElement.classList.contains('secfocus-intro-seen')) {
+      var html = document.documentElement
+      html.classList.add('secfocus-intro-seen')
+      html.classList.remove('overflow-hidden', 'secfocus-scroll-lock')
+      return
+    }
+  } catch (_) {}
 
   var STEP_MS = 55
   var CAP = 92

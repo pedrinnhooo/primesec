@@ -86,9 +86,6 @@ function tick() {
 }
 
 useHead({
-  htmlAttrs: {
-    class: 'overflow-hidden'
-  },
   script: [
     {
       key: 'secfocus-loader-count',

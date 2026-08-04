@@ -967,6 +967,32 @@
   opacity: 0;
 }
 
+/*
+ * Intro já vista (cookie): esconde o loader do HTML pré-renderizado antes
+ * da hidratação — sem flash no reload / retorno à home.
+ */
+html.secfocus-intro-seen #globe-loader {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+html.secfocus-intro-seen .primesec-hold .primesec-enter {
+  animation: none !important;
+  opacity: 1;
+  transform: none;
+}
+
+/*
+ * Trava scroll só enquanto o loader está de fato ativo (1ª visita).
+ * Com cookie / classe secfocus-intro-seen o scroll fica livre o tempo todo —
+ * evita o “trava e solta” ao hidratar visitas em cache.
+ * Docs Nuxt: preferir estado leve (cookie/useState) + CSS em vez de
+ * useHead(overflow) que disputa com a hidratação.
+ */
+html:has(#globe-loader):not(.secfocus-intro-seen) {
+  overflow: hidden;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .primesec-enter,
   .primesec-enter--terminal,

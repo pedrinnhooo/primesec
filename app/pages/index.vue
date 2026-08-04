@@ -1,12 +1,3 @@
-<script lang="ts">
-/**
- * Escopo de módulo (roda uma vez por carregamento de página, ao contrário do
- * corpo de `<script setup>`): a tela de carregamento pertence à primeira
- * pintura do site, não a cada volta para a home.
- */
-let introDone = false
-</script>
-
 <script setup lang="ts">
 definePageMeta({
   colorMode: 'dark'
@@ -17,6 +8,7 @@ defineRouteRules({
 })
 
 const page = useHomeContent()
+const { hasSeenIntro, markIntroSeen, applyIntroSeenDom, syncDomClass } = useHomeIntro()
 
 const title = computed(() => page.value.seo.title || page.value.title.replace(/\n/g, ' '))
 const description = computed(() => page.value.seo.description || page.value.description)
@@ -44,10 +36,20 @@ const globeProgress = ref(0)
 // Placeholder CSS do globo fica visível até o WebGL renderizar o 1º frame.
 const globeReady = ref(false)
 const fontsReady = ref(false)
-const revealed = ref(introDone)
 
-/** Trava a barra em 100% no instante em que a revelação é decidida. */
+/**
+ * Sempre começa “não revelado” no SSR/prerender (HTML estático sem cookie).
+ * - Reload com cookie: script cedo + CSS escondem o loader; onMounted revela.
+ * - Volta SPA (logo): fora da hidratação → revela já no setup (sem flash).
+ */
+const nuxtApp = useNuxtApp()
+const revealed = ref(false)
 const complete = ref(false)
+
+if (import.meta.client && hasSeenIntro.value && !nuxtApp.isHydrating) {
+  revealed.value = true
+  complete.value = true
+}
 
 // As fontes valem uma fatia pequena: a montagem do globo domina o tempo de carga.
 const progress = computed(() => complete.value
@@ -69,38 +71,49 @@ let paintTimeout: ReturnType<typeof setTimeout> | undefined
 function reveal() {
   if (revealed.value || complete.value) return
   clearTimeout(timeout)
-  introDone = true
+  markIntroSeen()
   // Marca progresso real como completo; a % na tela continua contando
   // até 100 e só então emite `done`.
   complete.value = true
   paintTimeout = setTimeout(() => {
+    applyIntroSeenDom()
     revealed.value = true
   }, COUNTUP_SAFETY_MS)
 }
 
 function onLoaderDone() {
   if (revealed.value) return
+  markIntroSeen()
   clearTimeout(paintTimeout)
   paintTimeout = setTimeout(() => {
+    applyIntroSeenDom()
     revealed.value = true
   }, COMPLETE_PAINT_MS)
 }
 
 watch([globeReady, fontsReady], ([globe, fonts]) => {
+  if (hasSeenIntro.value || revealed.value) return
   if (globe && fonts) reveal()
 })
 
 onMounted(() => {
-  if (revealed.value) return
+  syncDomClass()
 
-  timeout = setTimeout(reveal, REVEAL_TIMEOUT_MS)
-
-  // Espera o webfont para o hero não trocar de tipografia logo após a revelação.
   const markFonts = () => {
     fontsReady.value = true
   }
   const fonts = document.fonts?.ready ?? Promise.resolve()
   fonts.then(markFonts).catch(markFonts)
+
+  // Cache inteligente: já viu a intro → home na hora (globo sobe em background).
+  if (hasSeenIntro.value) {
+    markIntroSeen()
+    complete.value = true
+    revealed.value = true
+    return
+  }
+
+  timeout = setTimeout(reveal, REVEAL_TIMEOUT_MS)
 })
 
 onBeforeUnmount(() => {
