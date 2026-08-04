@@ -113,15 +113,22 @@ onMounted(() => {
   function resize() {
     const parent = el.parentElement
     if (!parent) return
-    w = parent.clientWidth
-    h = parent.clientHeight
+    const nextW = parent.clientWidth
+    const nextH = parent.clientHeight
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap)
+    const sizeChanged = Math.abs(nextW - w) > 2 || Math.abs(nextH - h) > 2
+    w = nextW
+    h = nextH
     el.width = Math.max(1, Math.floor(w * dpr))
     el.height = Math.max(1, Math.floor(h * dpr))
     el.style.width = `${w}px`
     el.style.height = `${h}px`
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    seedField()
+    // Só regenera o campo quando o tamanho muda de verdade —
+    // evita “reload” visual do banner em shifts mínimos (ex.: poll do blog).
+    if (sizeChanged || stars.length === 0) {
+      seedField()
+    }
   }
 
   function seedField() {

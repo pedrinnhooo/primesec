@@ -32,7 +32,7 @@ const newsLang = computed(() => {
 
 // Fetch só no client: a página é prerenderizada como casca estática
 // e o feed hidrata "ao vivo" no navegador — idioma acompanha o locale.
-const { data: feed, status, error, refresh } = await useFetch<NewsFeed>('/api/news', {
+const { data: feed, status, error } = await useFetch<NewsFeed>('/api/news', {
   server: false,
   lazy: true,
   query: { lang: newsLang },
@@ -52,6 +52,8 @@ const toast = useToast()
 // congelado no cache do Nitro — assim o label muda a cada refresh).
 const syncedAt = ref<Date | null>(null)
 const refreshing = ref(false)
+/** Poll silencioso: atualiza feed + horário sem loading UI / status do useFetch. */
+const softRefreshing = ref(false)
 
 // Feedback do botão de sync: loading fica visível mesmo em resposta rápida;
 // success dá confirmação quando o horário quase não muda o suficiente pra notar.
@@ -116,10 +118,10 @@ onBeforeUnmount(() => {
 })
 
 async function refreshFeed(manual = false) {
-  // Evita requisições concorrentes (botão + intervalo + retry).
-  if (status.value === 'pending' || refreshing.value) return
+  if (refreshing.value || softRefreshing.value) return
 
   if (manual) {
+    if (status.value === 'pending' && !feed.value) return
     const now = Date.now()
     pruneManualRefreshes(now)
     if (manualRefreshAt.value.length >= NEWS_MANUAL_LIMIT) {
@@ -129,38 +131,42 @@ async function refreshFeed(manual = false) {
     manualRefreshAt.value.push(now)
     clearRefreshSuccessTimer()
     refreshFeedback.value = 'loading'
-  }
-
-  refreshing.value = true
-  const startedAt = Date.now()
-  try {
-    // Manual: ?fresh=1 bypassa o cache Nitro e regenera o feed.
-    // Auto (2 min): usa cache até expirar (maxAge 120s), aí vem fresco.
-    if (manual) {
+    refreshing.value = true
+    const startedAt = Date.now()
+    try {
+      // Manual: ?fresh=1 bypassa o cache Nitro e regenera o feed.
       const next = await $fetch<NewsFeed>('/api/news', {
         query: { fresh: '1', lang: newsLang.value }
       })
       feed.value = next
-      error.value = undefined
-    } else {
-      await refresh()
-    }
-    syncedAt.value = new Date()
-
-    if (manual) {
+      if (error.value) error.value = null
+      syncedAt.value = new Date()
       const elapsed = Date.now() - startedAt
       if (elapsed < MANUAL_LOADING_MIN_MS) {
         await new Promise(resolve => setTimeout(resolve, MANUAL_LOADING_MIN_MS - elapsed))
       }
       showRefreshSuccess()
+    } catch (err) {
+      refreshFeedback.value = 'idle'
+      if (isRateLimitedError(err)) showRefreshLimitToast()
+    } finally {
+      refreshing.value = false
     }
-  } catch (err) {
-    if (manual) refreshFeedback.value = 'idle'
-    if (manual && isRateLimitedError(err)) {
-      showRefreshLimitToast()
-    }
+    return
+  }
+
+  // Auto (2 min): patch silencioso — só cards + horário; banner/página intactos.
+  softRefreshing.value = true
+  try {
+    const next = await $fetch<NewsFeed>('/api/news', {
+      query: { lang: newsLang.value }
+    })
+    feed.value = next
+    syncedAt.value = new Date()
+  } catch {
+    // Falha silenciosa no poll — o usuário ainda vê o feed anterior.
   } finally {
-    refreshing.value = false
+    softRefreshing.value = false
   }
 }
 
@@ -169,16 +175,14 @@ useIntervalFn(() => {
   refreshFeed(false)
 }, NEWS_POLL_MS)
 
-const loading = computed(() => (status.value === 'pending' || refreshing.value) && !feed.value)
-const isRefreshing = computed(() => status.value === 'pending' || refreshing.value)
-const isRefreshButtonLoading = computed(() =>
-  refreshFeedback.value === 'loading' || (isRefreshing.value && refreshFeedback.value !== 'success')
-)
+const loading = computed(() => status.value === 'pending' && !feed.value)
+const isRefreshing = computed(() => refreshing.value)
+const isRefreshButtonLoading = computed(() => refreshFeedback.value === 'loading')
 const refreshButtonIcon = computed(() =>
   refreshFeedback.value === 'success' ? 'i-lucide-check' : 'i-lucide-refresh-cw'
 )
 const refreshButtonLabel = computed(() => {
-  if (refreshFeedback.value === 'loading' || isRefreshButtonLoading.value) return t('blog.refreshing')
+  if (refreshFeedback.value === 'loading') return t('blog.refreshing')
   if (refreshFeedback.value === 'success') return t('blog.refreshed')
   return t('blog.refresh')
 })

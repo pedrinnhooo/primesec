@@ -648,6 +648,10 @@
   margin-right: 0.45rem;
 }
 
+.primesec-locale-wrap--open {
+  z-index: 40;
+}
+
 @media (min-width: 640px) {
   .primesec-locale-wrap {
     margin-left: 0.65rem;
@@ -750,9 +754,13 @@
 }
 
 .primesec-locale-menu {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 0;
+  right: auto;
   z-index: 80;
   min-width: 12.5rem;
-  max-width: min(18rem, calc(100% - 1.5rem));
+  max-width: min(18rem, calc(100vw - 1.5rem));
   padding: 0.4rem;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 0.95rem;
@@ -764,6 +772,14 @@
     inset 0 1px 0 rgb(255 255 255 / 0.08);
   backdrop-filter: blur(20px) saturate(1.35);
   -webkit-backdrop-filter: blur(20px) saturate(1.35);
+}
+
+/* Desktop: ancora pela direita do ícone (controle fica à direita da nav). */
+@media (min-width: 768px) {
+  .primesec-locale-menu {
+    left: auto;
+    right: 0;
+  }
 }
 
 .primesec-locale-menu__item {
