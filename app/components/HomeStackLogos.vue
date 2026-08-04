@@ -33,7 +33,7 @@ const HEX_POINTS = '50,2.2 97.8,29.2 97.8,86.3 50,113.3 2.2,86.3 2.2,29.2'
 type StrokePhase = 'trace' | 'leave' | 'bridge' | 'enter'
 
 interface GroupStroke {
-  /** Ordem aleatória de visita das células. */
+  /** Ordem aleatória de visita das células (só animação). */
   order: number[]
   /** Cursor na order. */
   cursor: number
@@ -42,7 +42,7 @@ interface GroupStroke {
   to: number
 }
 
-/** Colunas embaralhadas para não ficarem iguais. */
+/** Colunas na ordem definida em HOME_LOGO_GROUPS. */
 const displayGroups = ref<StackLogoGroup[]>([])
 const strokes = ref<Record<string, GroupStroke>>({})
 const timers = new Map<string, ReturnType<typeof setTimeout>>()
@@ -63,7 +63,8 @@ function makeOrder() {
 }
 
 function initStrokes(groups: readonly StackLogoGroup[]) {
-  displayGroups.value = shuffle([...groups])
+  // Ordem fixa dos grupos — só a animação do traço é aleatória.
+  displayGroups.value = [...groups]
   const next: Record<string, GroupStroke> = {}
   groups.forEach((group, i) => {
     const order = makeOrder()
@@ -273,7 +274,7 @@ function flowClass(groupId: string, index: number) {
       <section
         v-for="(group, index) in displayGroups"
         :key="group.id"
-        class="stack-logos__group flex flex-col items-center px-3 sm:px-4"
+        class="stack-logos__group flex w-full flex-col items-center px-1 sm:px-4"
         :class="index === displayGroups.length - 1 ? 'sm:col-span-2 lg:col-span-1' : ''"
       >
         <h3 class="mb-8 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-primary/80 sm:mb-10">
@@ -362,7 +363,7 @@ function flowClass(groupId: string, index: number) {
 
                 <UIcon
                   :name="item.icon"
-                  class="honeycomb__icon size-6 sm:size-7"
+                  class="honeycomb__icon"
                 />
                 <span class="honeycomb__label">
                   {{ item.label }}
@@ -402,10 +403,16 @@ function flowClass(groupId: string, index: number) {
 </template>
 
 <style scoped>
+.stack-logos__group {
+  container-type: inline-size;
+  container-name: stack-group;
+}
+
 .honeycomb {
-  --hex: 4.5rem;
+  /* Fallback sem container query: cabe em ~viewport mobile. */
+  --gap: 0.4rem;
+  --hex: min(4.5rem, calc((100vw - 2.5rem - 3.5 * var(--gap)) / 4.5));
   --hex-h: calc(var(--hex) * 1.1547);
-  --gap: 0.75rem;
   --step: calc(var(--hex) + var(--gap));
   --row-pull: calc(var(--hex-h) * 0.25 - var(--gap) * 0.5);
 
@@ -418,19 +425,49 @@ function flowClass(groupId: string, index: number) {
   margin-inline: auto;
 }
 
+@supports (width: 1cqi) {
+  .honeycomb {
+    --hex: min(4.5rem, calc((100cqi - 3.5 * var(--gap)) / 4.5));
+  }
+}
+
+@container stack-group (min-width: 22rem) {
+  .honeycomb {
+    --gap: 0.55rem;
+  }
+}
+
+@container stack-group (min-width: 28rem) {
+  .honeycomb {
+    --gap: 0.75rem;
+    --hex: min(5rem, calc((100cqi - 3.5 * var(--gap)) / 4.5));
+  }
+}
+
 @media (min-width: 640px) {
   .honeycomb {
-    --hex: 5rem;
     --gap: 0.9rem;
+  }
+
+  @supports (width: 1cqi) {
+    .honeycomb {
+      --hex: min(5rem, calc((100cqi - 3.5 * var(--gap)) / 4.5));
+    }
+  }
+
+  @supports not (width: 1cqi) {
+    .honeycomb {
+      --hex: min(5rem, calc((100vw - 4rem - 3.5 * var(--gap)) / 4.5));
+    }
   }
 }
 
 .honeycomb__bridges {
   position: absolute;
-  inset: -12% -18%;
+  inset: -10% -6%;
   z-index: 5;
-  width: 136%;
-  height: 124%;
+  width: auto;
+  height: auto;
   pointer-events: none;
   overflow: visible;
 }
@@ -494,8 +531,8 @@ function flowClass(groupId: string, index: number) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.22rem;
-  padding: 0.35rem 0.45rem 0.55rem;
+  gap: calc(var(--hex) * 0.04);
+  padding: calc(var(--hex) * 0.08) calc(var(--hex) * 0.1) calc(var(--hex) * 0.12);
   isolation: isolate;
   clip-path: polygon(
     50% 0%,
@@ -558,6 +595,8 @@ function flowClass(groupId: string, index: number) {
 .honeycomb__icon {
   position: relative;
   z-index: 2;
+  width: calc(var(--hex) * 0.4);
+  height: calc(var(--hex) * 0.4);
   color: color-mix(in oklch, var(--ui-text-muted) 92%, transparent);
   filter: grayscale(1);
   transition:
@@ -575,7 +614,7 @@ function flowClass(groupId: string, index: number) {
   white-space: nowrap;
   text-align: center;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 7.5px;
+  font-size: max(6px, calc(var(--hex) * 0.145));
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: color-mix(in oklch, var(--ui-text-dimmed) 75%, transparent);

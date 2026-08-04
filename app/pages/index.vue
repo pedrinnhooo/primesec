@@ -260,7 +260,7 @@ useHead({
       </div>
 
       <div
-        class="primesec-enter relative z-20 max-w-7xl mx-auto w-full pointer-events-auto mt-8 sm:mt-12 overflow-visible"
+        class="primesec-enter relative z-20 mx-auto w-full max-w-7xl pointer-events-auto mt-8 sm:mt-12"
         style="--enter-delay: 0.95s"
       >
         <HomeStackLogos

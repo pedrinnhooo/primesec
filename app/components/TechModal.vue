@@ -76,7 +76,7 @@ function close() {
     v-model:open="open"
     :ui="{
       overlay: 'bg-black/70 backdrop-blur-sm',
-      content: 'bg-[#080b08] ring ring-white/10 divide-y divide-white/10 w-[min(96vw,52rem)] max-h-[min(92vh,40rem)] overflow-hidden',
+      content: 'bg-[#080b08] ring ring-white/10 divide-y divide-white/10 w-[calc(100%-1.5rem)] max-w-3xl max-h-[min(92vh,40rem)] overflow-hidden',
       header: 'bg-transparent p-5 sm:px-8 sm:py-6',
       body: 'bg-transparent p-5 sm:p-8 overflow-y-auto',
       footer: 'bg-transparent p-5 sm:px-8 sm:py-5'

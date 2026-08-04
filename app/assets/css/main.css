@@ -4,9 +4,25 @@
 @source "../../../content/**/*";
 
 @layer base {
+  html {
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+
+  /* Só no desktop: evita “pulo” de largura ao abrir modal (scrollbar). */
+  @media (min-width: 768px) {
+    html {
+      scrollbar-gutter: stable;
+    }
+  }
+
   /* Desktop: 100% do navegador ≈ 85% de zoom. Mobile: escala real (sem zoom). */
   body {
     zoom: 1;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+    /* Evita pan horizontal (arrastar o site para o lado no mobile). */
+    touch-action: pan-y;
   }
 
   @media (min-width: 768px) {
@@ -736,7 +752,7 @@
 .primesec-locale-menu {
   z-index: 80;
   min-width: 12.5rem;
-  max-width: calc(100vw - 1.5rem);
+  max-width: min(18rem, calc(100% - 1.5rem));
   padding: 0.4rem;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 0.95rem;
